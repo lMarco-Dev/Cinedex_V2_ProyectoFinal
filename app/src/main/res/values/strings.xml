@@ -4,29 +4,44 @@
     <string name="arrow_icon">Icono de flecha</string>
     <string name="fondo_login">Fondo de inicio de sesión</string>
 
-    <string name="terminos_placeholder">
-        "Bienvenido a Cinedex\n\n
-        Estos son los Términos y Condiciones que rigen el uso de esta aplicación móvil (\"la App\"). Al descargar, instalar o usar la App, aceptas estar sujeto a estos términos. Si no estás de acuerdo, no uses la App.\n\n
+    <string name="terminos_cinedex">
+CineDex es una aplicación dedicada a la consulta, valoración y gestión de contenido cinematográfico.
+Al utilizar CineDex usted acepta los siguientes términos:
 
-        1. Aceptación de los Términos\n
-        Al crear una cuenta o usar Cinedex, confirmas que tienes al menos 13 años de edad y que aceptas cumplir con todas las políticas aquí descritas.\n\n
+1. Uso General
+CineDex ofrece funciones de consulta de películas, creación de reseñas, marcación de favoritos,
+gestión de perfil y acceso a noticias, eventos y promociones relacionados con cines afiliados.
 
-        2. Cuentas de Usuario\n
-        Eres responsable de mantener la confidencialidad de tu cuenta y contraseña. Eres el único responsable de toda la actividad que ocurra bajo tu cuenta. Notifícanos inmediatamente sobre cualquier uso no autorizado.\n\n
+2. Información del Usuario
+Al registrarse usted proporciona datos personales como nombre, apellidos y correo electrónico.
+Esta información se utiliza únicamente para las funciones internas de la aplicación y no será
+compartida con terceros sin permiso.
 
-        3. Contenido del Usuario (Reseñas)\n
-        Tú conservas la propiedad de las reseñas y comentarios que publicas (\"Tu Contenido\"). Sin embargo, al publicar, otorgas a Cinedex una licencia mundial, no exclusiva y libre de regalías para mostrar, distribuir y reproducir Tu Contenido dentro de la App.\n\n
-        No está permitido publicar contenido que sea ilegal, ofensivo, difamatorio, spam o que infrinja los derechos de autor de terceros.\n\n
+3. Contenido Generado por el Usuario
+Las reseñas y comentarios publicados en CineDex son responsabilidad exclusiva del usuario.
+CineDex se reserva el derecho de eliminar contenido ofensivo o que viole estas normas.
 
-        4. Uso de APIs de Terceros (TMDB)\n
-        La información sobre películas, pósters y sinopsis es proporcionada por The Movie Database (TMDB). No garantizamos la precisión, integridad o actualidad de esta información. El uso de estos datos está sujeto a los términos de servicio de TMDB.\n\n
+4. Favoritos y Reseñas
+Las acciones realizadas dentro de la app pueden almacenarse en modo local en caso de no contar
+con conexión a internet. Una vez recuperada la conexión, la información será sincronizada.
 
-        5. Exclusión de Garantías\n
-        La App se proporciona \"tal cual\", sin garantías de ningún tipo. No garantizamos que la App funcionará sin interrupciones o libre de errores.\n\n
+5. Notificaciones
+CineDex puede enviar notificaciones sobre eventos, promociones y noticias relacionadas con cines
+afiliados. Estas notificaciones pueden desactivarse desde la configuración del dispositivo.
 
-        6. Cambios en los Términos\n
-        Nos reservamos el derecho de modificar estos términos en cualquier momento. Te notificaremos sobre cambios importantes. El uso continuado de la App después de los cambios constituye tu aceptación de los nuevos términos.\n\n
+6. Responsabilidad del Usuario
+Usted se compromete a utilizar la aplicación de manera adecuada y respetuosa.
+Está prohibido realizar actividades que afecten negativamente el funcionamiento de la plataforma.
 
-        Al hacer clic en \"Aceptar y Continuar\", confirmas que has leído y entendido estos Términos y Condiciones."
-    </string>
+7. Modificaciones del Servicio
+CineDex puede actualizar o modificar las funciones de la app sin previo aviso con el fin de mejorar
+la experiencia del usuario.
+
+8. Aceptación de los Términos
+Al continuar, declara que ha leído y acepta nuestros Términos y Servicios. Si no está de acuerdo,
+debe cerrar la aplicación y abstenerse de usarla.
+
+Gracias por utilizar CineDex.
+</string>
+
 </resources>

@@ -17,6 +17,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.cinedex_v2.Data.Access.PreferenciasTerminos;
 import com.example.cinedex_v2.Data.DTOs.Usuario.UsuarioLoginRequestDto;
 import com.example.cinedex_v2.Data.DTOs.Usuario.UsuarioResponseDto;
 import com.example.cinedex_v2.Data.Network.CineDexApiClient;
@@ -116,16 +117,12 @@ public class Actividad_Login extends AppCompatActivity {
                         intent = new Intent(Actividad_Login.this, Actividad_Admin.class);
 
                     } else {
-                        // Si es Usuario normal, revisamos si aceptó términos
-                        SharedPreferences prefsTerminos = getSharedPreferences("CineDexPrefs", MODE_PRIVATE);
-                        boolean acepto = prefsTerminos.getBoolean("TERMINOS_ACEPTADOS", false);
 
-                        if(!acepto) {
-                            // Si no aceptó, lo mandamos a Términos
-                            intent = new Intent(Actividad_Login.this, Actividad_Terminos.class);
-                        } else {
-                            // Si ya aceptó, lo mandamos a la Principal
+                        // Si es Usuario normal, verificamos si aceptó términos con la clase PreferenciasTerminos
+                        if (PreferenciasTerminos.terminosAceptados(Actividad_Login.this)) {
                             intent = new Intent(Actividad_Login.this, Actividad_Principal.class);
+                        } else {
+                            intent = new Intent(Actividad_Login.this, Actividad_Terminos.class);
                         }
                     }
 
