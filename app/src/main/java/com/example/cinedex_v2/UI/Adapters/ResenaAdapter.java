@@ -11,16 +11,16 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.cinedex_v2.Data.Models.DTOs.ResenaPublicaDto;
+import com.example.cinedex_v2.Data.DTOs.Resena.ResenaResponseDto;
 import com.example.cinedex_v2.R;
 
 import java.util.List;
 
 public class ResenaAdapter extends RecyclerView.Adapter<ResenaAdapter.ViewHolder> {
 
-    private List<ResenaPublicaDto> lista;
+    private List<ResenaResponseDto> lista;
 
-    public ResenaAdapter(List<ResenaPublicaDto> lista) {
+    public ResenaAdapter(List<ResenaResponseDto> lista) {
         this.lista = lista;
     }
 
@@ -34,17 +34,17 @@ public class ResenaAdapter extends RecyclerView.Adapter<ResenaAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        ResenaPublicaDto r = lista.get(position);
+        ResenaResponseDto r = lista.get(position);
 
         // Setear datos de la reseña
         holder.txtComentario.setText(r.getComentario());
-        holder.txtPelicula.setText("Película: " + r.getTituloPelicula());
-        holder.ratingBar.setRating(r.getCalificacion());
-        holder.fecha.setText(r.getFecha());
+        holder.txtPelicula.setText(r.getTituloPelicula());
+        holder.ratingBar.setRating((float) r.getPuntuacion());
+        holder.fecha.setText(r.getFecha().toString());
 
         Glide.with(holder.itemView.getContext())
                 .load(r.getPosterPeliculaURL())
-                .placeholder(R.drawable.bg_poster_placeholder) // mientras carga
+                .placeholder(R.drawable.bg_poster_placeholder)
                 .error(R.drawable.bg_poster_placeholder)
                 .centerCrop()
                 .into(holder.imgPoster);
@@ -66,7 +66,7 @@ public class ResenaAdapter extends RecyclerView.Adapter<ResenaAdapter.ViewHolder
             txtPelicula = itemView.findViewById(R.id.txtPelicula);
             fecha = itemView.findViewById(R.id.txtFecha);
             ratingBar = itemView.findViewById(R.id.ratingBarItem);
-            imgPoster = itemView.findViewById(R.id.imgPoster); // ImageView del layout
+            imgPoster = itemView.findViewById(R.id.imgPoster);
         }
     }
 }

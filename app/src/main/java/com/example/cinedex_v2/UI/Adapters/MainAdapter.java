@@ -8,137 +8,96 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import com.example.cinedex.Data.Models.Section;
-import com.example.cinedex.Data.Models.SectionTop10; // Importa el nuevo modelo
+import com.example.cinedex_v2.Data.Models.Pelicula;
+import com.example.cinedex_v2.Data.Models.Section;
+import com.example.cinedex_v2.Data.Models.SectionTop10;
 import com.example.cinedex_v2.R;
 import java.util.List;
 
 public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    // 1. Tipos de vista
-    private static final int VIEW_TYPE_STANDARD = 0; // -> Filas normales
-    private static final int VIEW_TYPE_TOP10 = 1; // -> Fila para top10
+    private static final int VIEW_TYPE_STANDARD = 0;
+    private static final int VIEW_TYPE_TOP10 = 1;
 
-    private List<Object> sections; //-> Lista de datos donde se guardaran los Sections
-    private Context context; // -> Para dar acceso herramientas y recursos
+    private List<Object> sections;
+    private Context context;
 
     public MainAdapter(List<Object> sections, Context context) {
         this.sections = sections;
         this.context = context;
     }
 
-    /* ========================================================================
-                            METODO INSPECTOR
-       ======================================================================== */
     @Override
     public int getItemViewType(int position) {
-        //Indica que tipo de fila construir de acuerdo a su posición
-        if (sections.get(position) instanceof Section) {
-            return VIEW_TYPE_STANDARD;
-        } else if (sections.get(position) instanceof SectionTop10) {
-            return VIEW_TYPE_TOP10;
-        }
-        return -1; // Error
+        if (sections.get(position) instanceof Section) return VIEW_TYPE_STANDARD;
+        else if (sections.get(position) instanceof SectionTop10) return VIEW_TYPE_TOP10;
+        return -1;
     }
 
-    /* ========================================================================
-                            METODO PARA FABRICAR FILAS
-       ======================================================================== */
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Infla el layout correcto basado en el viewType
         LayoutInflater inflater = LayoutInflater.from(context);
-
-        //Si es de tipo 0 -> fila normal
         if (viewType == VIEW_TYPE_STANDARD) {
             View view = inflater.inflate(R.layout.item_section, parent, false);
             return new SectionViewHolder(view);
         } else {
-            // Si es de tipo 1 -> fila top 10
             View view = inflater.inflate(R.layout.item_section_top10, parent, false);
             return new SectionTop10ViewHolder(view);
         }
     }
 
-    /* ========================================================================
-                            METODO DECORADOR PARA LLENAR LOS DATOS
-       ======================================================================== */
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        // Bindea los datos al ViewHolder correcto, Pregunta de que tipo es 0 o 1
-        if (holder.getItemViewType() == VIEW_TYPE_STANDARD) { // -> SI es de tipo 0
-
-            // Es una sección estándar
-            SectionViewHolder vhStandard = (SectionViewHolder) holder;
+        if (holder.getItemViewType() == VIEW_TYPE_STANDARD) {
+            SectionViewHolder vh = (SectionViewHolder) holder;
             Section section = (Section) sections.get(position);
-            vhStandard.sectionTitle.setText(section.getTitle());
 
-            vhStandard.movieRecyclerView.setLayoutManager(
+            vh.sectionTitle.setText(section.getTitle());
+            vh.movieRecyclerView.setLayoutManager(
                     new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             );
-            // USA EL MovieAdapter ESTÁNDAR
-            MovieAdapter movieAdapter = new MovieAdapter(section.getMovieList(), context); //-> Constructor horizontal
-            vhStandard.movieRecyclerView.setAdapter(movieAdapter); // -> Le da las peliculas y llena la lista
+            MovieAdapter adapter = new MovieAdapter(section.getMovieList(), context);
+            vh.movieRecyclerView.setAdapter(adapter);
 
         } else if (holder.getItemViewType() == VIEW_TYPE_TOP10) {
-            // Es una sección Top 10
-            SectionTop10ViewHolder vhTop10 = (SectionTop10ViewHolder) holder;
+            SectionTop10ViewHolder vh = (SectionTop10ViewHolder) holder;
             SectionTop10 sectionTop10 = (SectionTop10) sections.get(position);
 
-            // Pone el titulo y subtitulo
-            vhTop10.sectionTitle.setText(sectionTop10.getTitle());
-            vhTop10.sectionSubtitle.setText(sectionTop10.getSubtitle());
-
-            vhTop10.movieRecyclerView.setLayoutManager(
+            vh.sectionTitle.setText(sectionTop10.getTitle());
+            vh.sectionSubtitle.setText(sectionTop10.getSubtitle());
+            vh.movieRecyclerView.setLayoutManager(
                     new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             );
-            // USA EL MovieAdapterTop10 (NUEVO)
-            MovieAdapterTop10 movieAdapterTop10 = new MovieAdapterTop10(sectionTop10.getMovies(), context);
-            vhTop10.movieRecyclerView.setAdapter(movieAdapterTop10);
+            MovieAdapterTop10 adapterTop10 = new MovieAdapterTop10(sectionTop10.getMovies(), context);
+            vh.movieRecyclerView.setAdapter(adapterTop10);
         }
     }
 
-    /* ========================================================================
-                                        CONTADOR
-       ======================================================================== */
     @Override
     public int getItemCount() {
         return sections.size();
     }
 
-
-    /* ========================================================================
-                                    ACTUALIZADOR
-       ======================================================================== */
     public void setSections(List<Object> newSections) {
         this.sections.clear();
-        this.sections.addAll(newSections); // -> Añade la lista nueva y completa
-        notifyDataSetChanged(); // -> Dibuja los datos
+        this.sections.addAll(newSections);
+        notifyDataSetChanged();
     }
 
-
-    /* ========================================================================
-                             MOLDE PARA LA FILA ESTANDAR
-       ======================================================================== */
     public static class SectionViewHolder extends RecyclerView.ViewHolder {
         TextView sectionTitle;
         RecyclerView movieRecyclerView;
 
         public SectionViewHolder(@NonNull View itemView) {
             super(itemView);
-            sectionTitle = itemView.findViewById(R.id.section_title); // -> Busca el TextView del titulo y lo guarda
-            movieRecyclerView = itemView.findViewById(R.id.section_recycler_view); // -> Busca el RecyclerView y lo guarda en la caja
+            sectionTitle = itemView.findViewById(R.id.section_title);
+            movieRecyclerView = itemView.findViewById(R.id.section_recycler_view);
         }
     }
 
-
-    /* ========================================================================
-                             MOLDE PARA LA FILA TOP10
-       ======================================================================== */
     public static class SectionTop10ViewHolder extends RecyclerView.ViewHolder {
-        TextView sectionTitle;
-        TextView sectionSubtitle;
+        TextView sectionTitle, sectionSubtitle;
         RecyclerView movieRecyclerView;
 
         public SectionTop10ViewHolder(@NonNull View itemView) {

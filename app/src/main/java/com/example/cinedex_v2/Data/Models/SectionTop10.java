@@ -3,16 +3,16 @@ import java.util.List;
 
 // Este modelo es para la sección Top 10
 public class SectionTop10 {
-    private String title;
-    private String subtitle;
-    private List<Movie> movies;
+    private String titulo;
+    private String subtitulo;
+    private List<Pelicula> peliculas;
 
-    public SectionTop10(String title, String subtitle, List<Movie> movies) {
-        this.title = title;
-        this.subtitle = subtitle;
-        this.movies = movies;
+    public SectionTop10(String titulo, String subtitulo, List<Pelicula> peliculas) {
+        this.titulo = titulo;
+        this.subtitulo = subtitulo;
+        this.peliculas = peliculas;
     }
-    public String getTitle() { return title; }
-    public String getSubtitle() { return subtitle; }
-    public List<Movie> getMovies() { return movies; }
+    public String getTitle() { return titulo; }
+    public String getSubtitle() { return subtitulo; }
+    public List<Pelicula> getMovies() { return peliculas; }
 }

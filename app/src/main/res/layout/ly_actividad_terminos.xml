@@ -73,7 +73,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="25dp"
-            android:background="@drawable/bg_btn_green"
+            android:background="@drawable/btn_gold_gradient"
             android:foreground="?selectableItemBackground">
 
             <TextView

@@ -3,19 +3,19 @@ package com.example.cinedex_v2.Data.Models;
 import java.util.List;
 
 public class Section {
-    private String title;
-    private List<Movie> movieList;
+    private String titulo;
+    private List<Pelicula> peliculaList;
 
-    public Section(String title, List<Movie> movieList) {
-        this.title = title;
-        this.movieList = movieList;
+    public Section(String titulo, List<Pelicula> peliculaList) {
+        this.titulo = titulo;
+        this.peliculaList = peliculaList;
     }
 
     public String getTitle() {
-        return title;
+        return titulo;
     }
 
-    public List<Movie> getMovieList() {
-        return movieList;
+    public List<Pelicula> getMovieList() {
+        return peliculaList;
     }
 }

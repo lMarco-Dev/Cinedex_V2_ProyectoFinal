@@ -1,4 +1,4 @@
-package com.example.cinedex.UI.Fragments;
+package com.example.cinedex_v2.UI.Fragments;
 
 import android.os.Bundle;
 import androidx.annotation.NonNull;
@@ -12,11 +12,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.example.cinedex.Data.Models.DTOs.ResenaPublicaDto;
-import com.example.cinedex.Data.Network.CineDexApiClient;
-import com.example.cinedex.Data.Network.CineDexApiService;
-import com.example.cinedex.R;
-import com.example.cinedex.UI.Adapters.ResenaAdapter;
+import com.example.cinedex_v2.Data.DTOs.Resena.ResenaResponseDto;
+import com.example.cinedex_v2.Data.Network.CineDexApiClient;
+import com.example.cinedex_v2.Data.Network.CineDexApiService;
+import com.example.cinedex_v2.R;
+import com.example.cinedex_v2.UI.Adapters.ResenaAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,7 @@ public class ResenaFragment extends Fragment {
 
     private RecyclerView rvResenas;
     private ResenaAdapter adapter;
-    private List<ResenaPublicaDto> listaDeResenas;
+    private List<ResenaResponseDto> listaDeResenas;
     private CineDexApiService apiService;
 
     public ResenaFragment() { }
@@ -43,7 +43,7 @@ public class ResenaFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.ly_fragment_resena, container, false);
     }
@@ -60,12 +60,11 @@ public class ResenaFragment extends Fragment {
     }
 
     private void cargarResenasDesdeApi() {
-        apiService.getResenas().enqueue(new Callback<List<ResenaPublicaDto>>() {
+        apiService.getResenas().enqueue(new Callback<List<ResenaResponseDto>>() {
             @Override
-            public void onResponse(Call<List<ResenaPublicaDto>> call, Response<List<ResenaPublicaDto>> response) {
+            public void onResponse(@NonNull Call<List<ResenaResponseDto>> call,
+                                   @NonNull Response<List<ResenaResponseDto>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-
-                    // 🔥🔥🔥 ESTE LOG ES EL QUE NECESITAS VER 🔥🔥🔥
                     Log.d("API_RESEÑAS", "Respuesta JSON: " + new com.google.gson.Gson().toJson(response.body()));
 
                     listaDeResenas.clear();
@@ -78,13 +77,12 @@ public class ResenaFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<List<ResenaPublicaDto>> call, Throwable t) {
+            public void onFailure(@NonNull Call<List<ResenaResponseDto>> call, @NonNull Throwable t) {
                 Toast.makeText(getContext(), "Fallo de conexión", Toast.LENGTH_SHORT).show();
                 Log.e("ResenaFragment", "Fallo red: " + t.getMessage());
             }
         });
     }
-
 
     @Override
     public void onResume() {

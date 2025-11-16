@@ -10,6 +10,8 @@ import com.example.cinedex_v2.Data.DTOs.Noticia.NoticiaRequest;
 import com.example.cinedex_v2.Data.DTOs.Noticia.NoticiaResponse;
 import com.example.cinedex_v2.Data.DTOs.Pelicula.PeliculaRequest;
 import com.example.cinedex_v2.Data.DTOs.Pelicula.PeliculaResponse;
+import com.example.cinedex_v2.Data.DTOs.Resena.ResenaRequestDto;
+import com.example.cinedex_v2.Data.DTOs.Resena.ResenaResponseDto;
 import com.example.cinedex_v2.Data.DTOs.Usuario.UsuarioLoginRequestDto;
 import com.example.cinedex_v2.Data.DTOs.Usuario.UsuarioRegisterRequestDto;
 import com.example.cinedex_v2.Data.DTOs.Usuario.UsuarioResponseDto;
@@ -107,4 +109,26 @@ public interface CineDexApiService {
 
     @DELETE("api/Noticias/{id}")
     Call<Void> eliminarNoticia(@Path("id") int id);
+
+    // ================== RESEÑAS ==================
+    @GET("api/Resenas")
+    Call<List<ResenaResponseDto>> getResenas();
+
+    @GET("api/Resenas/usuario/{idUsuario}")
+    Call<List<ResenaResponseDto>> getResenasPorUsuario(@Path("idUsuario") int idUsuario);
+
+    @GET("api/Resenas/pelicula/{idPelicula}")
+    Call<List<ResenaResponseDto>> getResenasPorPelicula(@Path("idPelicula") int idPelicula);
+
+    @POST("api/Resenas")
+    Call<ResenaResponseDto> crearResena(@Body ResenaRequestDto resena);
+
+    @PUT("api/Resenas/{id}")
+    Call<Void> editarResena(@Path("id") int id, @Body ResenaRequestDto resena);
+
+    @DELETE("api/Resenas/{id}")
+    Call<Void> eliminarResena(@Path("id") int id);
+
+
+
 }

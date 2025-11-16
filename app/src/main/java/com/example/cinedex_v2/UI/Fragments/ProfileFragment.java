@@ -1,5 +1,5 @@
 // Archivo: UI/Fragments/ProfileFragment.java
-package com.example.cinedex.UI.Fragments;
+package com.example.cinedex_v2.UI.Fragments;
 
 import android.content.Context; // ✅ IMPORTADO
 import android.content.Intent;
@@ -19,9 +19,9 @@ import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
-import com.example.cinedex.R;
-import com.example.cinedex.UI.Activities.Actividad_Usuario;
-import com.example.cinedex.UI.Activities.Actividad_Terminos;
+import com.example.cinedex_v2.R;
+import com.example.cinedex_v2.UI.Activities.Actividad_Usuario;
+import com.example.cinedex_v2.UI.Activities.Actividad_Terminos;
 import com.google.android.material.button.MaterialButton;
 
 public class ProfileFragment extends Fragment {

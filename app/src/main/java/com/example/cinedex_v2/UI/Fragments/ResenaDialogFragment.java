@@ -1,5 +1,5 @@
 // Archivo: UI/Fragments/ResenaDialogFragment.java
-package com.example.cinedex.UI.Fragments;
+package com.example.cinedex_v2.UI.Fragments;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -16,7 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
-import com.example.cinedex.R;
+import com.example.cinedex_v2.R;
 
 public class ResenaDialogFragment extends DialogFragment {
 

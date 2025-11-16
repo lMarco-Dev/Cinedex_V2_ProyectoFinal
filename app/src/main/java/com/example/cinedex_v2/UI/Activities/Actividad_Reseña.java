@@ -1,10 +1,10 @@
 package com.example.cinedex_v2.UI.Activities;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,25 +16,21 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.cinedex_v2.Data.Models.DTOs.MensajeRespuestaDto;
-import com.example.cinedex_v2.Data.Models.DTOs.ResenaPublicaDto;
-import com.example.cinedex_v2.Data.Models.DTOs.ResenaRequestDto;
-import com.example.cinedex_v2.Data.Models.Movie;
-import com.example.cinedex_v2.Data.Models.MovieResponse;
+import com.example.cinedex_v2.Data.DTOs.Pelicula.PeliculaResponse;
+import com.example.cinedex_v2.Data.DTOs.Resena.ResenaRequestDto;
+import com.example.cinedex_v2.Data.DTOs.Resena.ResenaResponseDto;
 import com.example.cinedex_v2.Data.Network.CineDexApiClient;
 import com.example.cinedex_v2.Data.Network.CineDexApiService;
-import com.example.cinedex_v2.Data.Network.TmdbApiService;
-import com.example.cinedex_v2.Data.Network.TmdbClient;
 import com.example.cinedex_v2.R;
 import com.example.cinedex_v2.UI.Adapters.ResenaAdapter;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.gson.Gson;
+import com.google.android.gms.tasks.OnSuccessListener;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,30 +41,28 @@ import retrofit2.Response;
 
 public class Actividad_Reseña extends AppCompatActivity {
 
-    TextView tvNombreUsuario, tvCorreoUsuario, tvUbicacion, tvResumen;
-    Spinner spinnerPeliculas;
-    EditText etComentario;
-    RatingBar ratingBar;
-    Button btnUbicacion, btnPublicar;
-    RecyclerView rvResenas;
+    private TextView tvNombreUsuario, tvCorreoUsuario, tvUbicacion, tvResumen;
+    private Spinner spinnerPeliculas;
+    private EditText etComentario;
+    private RatingBar ratingBar;
+    private Button btnUbicacion, btnPublicar;
+    private RecyclerView rvResenas;
 
-    CineDexApiService apiService;
-    TmdbApiService tmdbService;
-    ResenaAdapter adapter;
+    private CineDexApiService apiService;
+    private ResenaAdapter adapter;
 
-    List<ResenaPublicaDto> resenas = new ArrayList<>();
-    List<Movie> peliculasTMDB = new ArrayList<>();
+    private List<ResenaResponseDto> resenas = new ArrayList<>();
+    private List<PeliculaResponse> peliculasSpinner = new ArrayList<>();
 
-    FusedLocationProviderClient fusedLocationClient;
-    ActivityResultLauncher<String> solicitarPermiso;
-
-    private final String TMDB_API_KEY = "908b6414babca36cf721d90d6b85e1f";
+    private FusedLocationProviderClient fusedLocationClient;
+    private ActivityResultLauncher<String> solicitarPermiso;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ly_actividad_resena);
 
+        // Vistas
         tvNombreUsuario = findViewById(R.id.tvNombreUsuario);
         tvCorreoUsuario = findViewById(R.id.tvCorreoUsuario);
         tvUbicacion = findViewById(R.id.tvUbicacion);
@@ -81,7 +75,6 @@ public class Actividad_Reseña extends AppCompatActivity {
         rvResenas = findViewById(R.id.rvResenas);
 
         apiService = CineDexApiClient.getApiService();
-        tmdbService = TmdbClient.getApiService();
 
         adapter = new ResenaAdapter(resenas);
         rvResenas.setLayoutManager(new LinearLayoutManager(this));
@@ -89,26 +82,12 @@ public class Actividad_Reseña extends AppCompatActivity {
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-        solicitarPermiso = registerForActivityResult(
-                new ActivityResultContracts.RequestPermission(),
-                isGranted -> {
-                    if (isGranted) obtenerUltimaUbicacion();
-                    else Toast.makeText(this, "Permiso denegado", Toast.LENGTH_SHORT).show();
-                }
-        );
+
 
         cargarDatosUsuario();
-        cargarPeliculasDesdeTMDB();
+        cargarPeliculasDesdeApi();
         cargarResenasDesdeApi();
 
-        btnUbicacion.setOnClickListener(v -> {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                    == PackageManager.PERMISSION_GRANTED) {
-                obtenerUltimaUbicacion();
-            } else {
-                solicitarPermiso.launch(Manifest.permission.ACCESS_FINE_LOCATION);
-            }
-        });
 
         btnPublicar.setOnClickListener(v -> publicarResena());
     }
@@ -119,45 +98,43 @@ public class Actividad_Reseña extends AppCompatActivity {
         tvCorreoUsuario.setText(prefs.getString("EMAIL_USUARIO", "correo@ejemplo.com"));
     }
 
-    private void cargarPeliculasDesdeTMDB() {
-        tmdbService.getPopularMovies(TMDB_API_KEY)
-                .enqueue(new Callback<MovieResponse>() {
-                    @Override
-                    public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
-                        if (!response.isSuccessful() || response.body() == null) {
-                            Toast.makeText(Actividad_Resena.this, "Error al cargar TMDB", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
+    private void cargarPeliculasDesdeApi() {
+        apiService.getPeliculas().enqueue(new Callback<List<PeliculaResponse>>() {
+            @Override
+            public void onResponse(Call<List<PeliculaResponse>> call, Response<List<PeliculaResponse>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    peliculasSpinner.clear();
+                    peliculasSpinner.addAll(response.body());
 
-                        peliculasTMDB = response.body().getResults();
-                        List<String> nombres = new ArrayList<>();
-                        for (Movie m : peliculasTMDB) nombres.add(m.getTitle());
+                    List<String> titulos = new ArrayList<>();
+                    for (PeliculaResponse p : peliculasSpinner) titulos.add(p.getTitulo());
 
-                        spinnerPeliculas.setAdapter(
-                                new ArrayAdapter<>(Actividad_Resena.this,
-                                        android.R.layout.simple_spinner_dropdown_item, nombres)
-                        );
-                    }
+                    spinnerPeliculas.setAdapter(new ArrayAdapter<>(
+                            Actividad_Reseña.this,
+                            android.R.layout.simple_spinner_dropdown_item,
+                            titulos
+                    ));
+                }
+            }
 
-                    @Override
-                    public void onFailure(Call<MovieResponse> call, Throwable t) {
-                        Toast.makeText(Actividad_Resena.this, "TMDB fallo: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
-
-    private void obtenerUltimaUbicacion() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-            return;
-
-        fusedLocationClient.getLastLocation().addOnSuccessListener(loc -> {
-            if (loc != null)
-                tvUbicacion.setText("Lat: " + loc.getLatitude() + "  Lon: " + loc.getLongitude());
+            @Override
+            public void onFailure(Call<List<PeliculaResponse>> call, Throwable t) {
+                Toast.makeText(Actividad_Reseña.this, "Error al cargar películas: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
+
+
+
     private void publicarResena() {
-        Movie movieSeleccionada = peliculasTMDB.get(spinnerPeliculas.getSelectedItemPosition());
+        int posicion = spinnerPeliculas.getSelectedItemPosition();
+        if (posicion == -1 || peliculasSpinner.isEmpty()) {
+            Toast.makeText(this, "Selecciona una película", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        PeliculaResponse peliculaSeleccionada = peliculasSpinner.get(posicion);
         String comentario = etComentario.getText().toString().trim();
         float puntaje = ratingBar.getRating();
 
@@ -168,49 +145,48 @@ public class Actividad_Reseña extends AppCompatActivity {
 
         SharedPreferences prefs = getSharedPreferences("sesion_usuario", MODE_PRIVATE);
         int idUsuario = prefs.getInt("ID_USUARIO", -1);
-
         if (idUsuario == -1) {
             Toast.makeText(this, "Usuario no logueado", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        ResenaRequestDto req = new ResenaRequestDto(
+        ResenaRequestDto request = new ResenaRequestDto(
                 idUsuario,
-                movieSeleccionada.getId(),
-                movieSeleccionada.getTitle(),
-                movieSeleccionada.getPosterPath(),
+                peliculaSeleccionada.getIdPelicula(),
                 comentario,
                 puntaje
         );
 
-        apiService.postResena(req).enqueue(new Callback<MensajeRespuestaDto>() {
+        apiService.crearResena(request).enqueue(new Callback<ResenaResponseDto>() {
             @Override
-            public void onResponse(Call<MensajeRespuestaDto> call, Response<MensajeRespuestaDto> response) {
+            public void onResponse(Call<ResenaResponseDto> call, Response<ResenaResponseDto> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    Toast.makeText(Actividad_Resena.this, response.body().getMensaje(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Actividad_Reseña.this, "Reseña guardada correctamente", Toast.LENGTH_SHORT).show();
                     etComentario.setText("");
                     ratingBar.setRating(0);
-                    cargarResenasDesdeApi();
+
+                    // Actualizar la lista de reseñas agregando la nueva
+                    resenas.add(response.body());
+                    adapter.notifyDataSetChanged();
+                    actualizarResumen();
                 } else {
-                    Toast.makeText(Actividad_Resena.this, "Error API: " + response.code(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(Actividad_Reseña.this, "Error al guardar reseña: " + response.code(), Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
-            public void onFailure(Call<MensajeRespuestaDto> call, Throwable t) {
-                Toast.makeText(Actividad_Resena.this, "Fallo de conexión", Toast.LENGTH_SHORT).show();
+            public void onFailure(Call<ResenaResponseDto> call, Throwable t) {
+                Toast.makeText(Actividad_Reseña.this, "Error de conexión: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+
     }
 
     private void cargarResenasDesdeApi() {
-        apiService.getResenas().enqueue(new Callback<List<ResenaPublicaDto>>() {
+        apiService.getResenas().enqueue(new Callback<List<ResenaResponseDto>>() {
             @Override
-            public void onResponse(Call<List<ResenaPublicaDto>> call, Response<List<ResenaPublicaDto>> response) {
+            public void onResponse(Call<List<ResenaResponseDto>> call, Response<List<ResenaResponseDto>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-
-                    Log.d("API_RESEÑAS", new Gson().toJson(response.body()));
-
                     resenas.clear();
                     resenas.addAll(response.body());
                     adapter.notifyDataSetChanged();
@@ -219,7 +195,8 @@ public class Actividad_Reseña extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<List<ResenaPublicaDto>> call, Throwable t) {
+            public void onFailure(Call<List<ResenaResponseDto>> call, Throwable t) {
+                Toast.makeText(Actividad_Reseña.this, "Error al cargar reseñas", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -231,7 +208,7 @@ public class Actividad_Reseña extends AppCompatActivity {
         }
 
         float total = 0;
-        for (ResenaPublicaDto r : resenas) total += r.getCalificacion();
+        for (ResenaResponseDto r : resenas) total += r.getPuntuacion();
 
         float promedio = total / resenas.size();
         tvResumen.setText(resenas.size() + " reseñas • ⭐ " + String.format("%.1f", promedio));

@@ -1,4 +1,3 @@
-// Archivo: Data/Access/DAOUsuario.java
 package com.example.cinedex_v2.Data.Access;
 
 import android.content.ContentValues;
@@ -7,8 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.example.cinedex_v2.Data.Models.DTOs.UsuarioPublicoDto;
 import com.example.cinedex_v2.Data.Models.Usuario;
+import com.example.cinedex_v2.Data.DTOs.Usuario.UsuarioRegisterRequestDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,68 +21,67 @@ public class DAOUsuario {
         Log.d("Estado","[BDHelper]: Inicializado Correctamente");
     }
 
-    // --- ¡¡MÉTODO INSERTAR CORREGIDO!! ---
-    public long Insertar(UsuarioPublicoDto usuarioDto, String contrasenaPlana) {
+    // Insertar usuario desde Register DTO
+    public long insertar(UsuarioRegisterRequestDto dto, String contrasenaHash) {
         SQLiteDatabase db = helper.getWritableDatabase();
         ContentValues cv = new ContentValues();
 
-        // Ponemos TODOS los datos del DTO
-        cv.put(BDHelper.ID_USUARIO, usuarioDto.getIdUsuario());
-        cv.put(BDHelper.COL_NOMBRE_USUARIO, usuarioDto.getNombreUsuario());
-        cv.put(BDHelper.COL_NOMBRES, usuarioDto.getNombres());
-        cv.put(BDHelper.COL_APELLIDOS, usuarioDto.getApellidos());
-        cv.put(BDHelper.COL_CONTRASENA, contrasenaPlana);
-
-        // --- ¡¡AQUÍ ESTÁ LA CORRECCIÓN!! ---
-        // Como el DTO no trae email, pero la BD local lo exige (NOT NULL),
-        // guardamos el nombreUsuario en la columna email.
-        cv.put(BDHelper.COL_EMAIL, usuarioDto.getNombreUsuario());
-
-        // Asignamos un rango por defecto
-        cv.put(BDHelper.COL_RANGO_ACTUAL, 1); // Valor por defecto '1'
+        cv.put(BDHelper.COL_NOMBRE_USUARIO, dto.getNombreUsuario());
+        cv.put(BDHelper.COL_EMAIL, dto.getEmail());
+        cv.put(BDHelper.COL_CONTRASENA, contrasenaHash);
+        cv.put(BDHelper.COL_NOMBRES, dto.getNombres());
+        cv.put(BDHelper.COL_APELLIDOS, dto.getApellidos());
+        cv.put(BDHelper.COL_ROL, "usuario"); // Valor por defecto
+        cv.put(BDHelper.COL_AVATAR, ""); // valor por defecto si no hay avatar
 
         long id = db.insert(BDHelper.TABLA_USUARIO, null, cv);
         db.close();
         return id;
     }
 
-    // ✅ LISTAR TODOS
-    public List<Usuario> Listar(){
+    // Listar todos los usuarios
+    public List<Usuario> listar() {
         List<Usuario> lista = new ArrayList<>();
         SQLiteDatabase db = helper.getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT * FROM " + BDHelper.TABLA_USUARIO, null);
 
-        String sql = "SELECT * FROM " + BDHelper.TABLA_USUARIO;
-        Cursor registros = db.rawQuery(sql,null);
-
-        int idIndex = registros.getColumnIndexOrThrow(BDHelper.ID_USUARIO);
-        int nombreUsuario = registros.getColumnIndexOrThrow(BDHelper.COL_NOMBRE_USUARIO);
-        int email = registros.getColumnIndexOrThrow(BDHelper.COL_EMAIL);
-        int contraseña = registros.getColumnIndexOrThrow(BDHelper.COL_CONTRASENA);
-        int nombres = registros.getColumnIndexOrThrow(BDHelper.COL_NOMBRES);
-        int apellidos = registros.getColumnIndexOrThrow(BDHelper.COL_APELLIDOS);
-        int rango = registros.getColumnIndexOrThrow(BDHelper.COL_RANGO_ACTUAL);
-
-        if(registros.moveToFirst()){
+        if (c.moveToFirst()) {
             do {
                 Usuario u = new Usuario();
-                u.setIdUsuario(registros.getInt(idIndex));
-                u.setNombreUsuario(registros.getString(nombreUsuario));
-                u.setEmail(registros.getString(email));
-                u.setContrasena(registros.getString(contraseña));
-                u.setNombres(registros.getString(nombres));
-                u.setApellidos(registros.getString(apellidos));
-                u.setIdRangoActual(registros.getInt(rango));
-
+                u.setIdUsuario(c.getInt(c.getColumnIndexOrThrow(BDHelper.ID_USUARIO)));
+                u.setNombreUsuario(c.getString(c.getColumnIndexOrThrow(BDHelper.COL_NOMBRE_USUARIO)));
+                u.setEmail(c.getString(c.getColumnIndexOrThrow(BDHelper.COL_EMAIL)));
+                u.setContrasenaHash(c.getString(c.getColumnIndexOrThrow(BDHelper.COL_CONTRASENA)));
+                u.setNombres(c.getString(c.getColumnIndexOrThrow(BDHelper.COL_NOMBRES)));
+                u.setApellidos(c.getString(c.getColumnIndexOrThrow(BDHelper.COL_APELLIDOS)));
+                u.setRol(c.getString(c.getColumnIndexOrThrow(BDHelper.COL_ROL)));
+                u.setUrlAvatar(c.getString(c.getColumnIndexOrThrow(BDHelper.COL_AVATAR)));
                 lista.add(u);
-            } while (registros.moveToNext());
+            } while (c.moveToNext());
         }
-        registros.close();
+        c.close();
         db.close();
         return lista;
     }
 
-    // ✅ ELIMINAR
-    public boolean Eliminar(int idUsuario){
+    // Actualizar usuario desde Update DTO
+    public boolean actualizar(int idUsuario, UsuarioRegisterRequestDto dto, String urlAvatar) {
+        SQLiteDatabase db = helper.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        cv.put(BDHelper.COL_NOMBRE_USUARIO, dto.getNombreUsuario());
+        cv.put(BDHelper.COL_NOMBRES, dto.getNombres());
+        cv.put(BDHelper.COL_APELLIDOS, dto.getApellidos());
+        cv.put(BDHelper.COL_AVATAR, urlAvatar);
+
+        int filas = db.update(BDHelper.TABLA_USUARIO, cv, BDHelper.ID_USUARIO + "=?",
+                new String[]{String.valueOf(idUsuario)});
+        db.close();
+        return filas > 0;
+    }
+
+    // Eliminar
+    public boolean eliminar(int idUsuario){
         SQLiteDatabase db = helper.getWritableDatabase();
         int filas = db.delete(BDHelper.TABLA_USUARIO,
                 BDHelper.ID_USUARIO + "=?",
@@ -92,34 +90,13 @@ public class DAOUsuario {
         return filas > 0;
     }
 
-    // ✅ ACTUALIZAR
-    public boolean Actualizar(Usuario u, int idUsuario) {
-        SQLiteDatabase db = helper.getWritableDatabase();
-        ContentValues valores = new ContentValues();
-
-        valores.put(BDHelper.COL_NOMBRE_USUARIO, u.getNombreUsuario());
-        valores.put(BDHelper.COL_EMAIL, u.getEmail());
-        valores.put(BDHelper.COL_CONTRASENA, u.getContrasena());
-        valores.put(BDHelper.COL_NOMBRES, u.getNombres());
-        valores.put(BDHelper.COL_APELLIDOS, u.getApellidos());
-        valores.put(BDHelper.COL_RANGO_ACTUAL, u.getIdRangoActual());
-
-        int filas = db.update(BDHelper.TABLA_USUARIO,
-                valores,
-                BDHelper.ID_USUARIO + "=?",
-                new String[]{String.valueOf(idUsuario)});
-        db.close();
-        return filas > 0;
-    }
-
-    // ✅ Verificar si existe usuario
-    public boolean ExisteUsuario(String nombreUsuario){
+    // Verificar existencia por nombreUsuario
+    public boolean existeUsuario(String nombreUsuario){
         SQLiteDatabase db = helper.getReadableDatabase();
         Cursor cursor = db.rawQuery(
                 "SELECT 1 FROM " + BDHelper.TABLA_USUARIO + " WHERE " + BDHelper.COL_NOMBRE_USUARIO + " = ?",
                 new String[]{nombreUsuario}
         );
-
         boolean existe = cursor.moveToFirst();
         cursor.close();
         db.close();

@@ -1,28 +1,29 @@
-package com.example.cinedex_v2.Data.Models;
+package com.example.cinedex_v2.Data.DTOs.Resena;
 
-public class Resena {
-    private int idResena;
+import com.google.gson.annotations.SerializedName;
+
+public class ResenaRequestDto {
+    @SerializedName("IdUsuario")
     private int idUsuario;
+
+    @SerializedName("IdPelicula")
     private int idPelicula;
+
+    @SerializedName("Comentario")
     private String comentario;
+
+    @SerializedName("Puntuacion")
     private double puntuacion;
-    private String fecha;
 
-    public Resena() {}
-
-    public Resena(int idResena, int idUsuario, int idPelicula, String comentario,
-                  double puntuacion, String fecha) {
-        this.idResena = idResena;
+    // Constructor
+    public ResenaRequestDto(int idUsuario, int idPelicula, String comentario, double puntuacion) {
         this.idUsuario = idUsuario;
         this.idPelicula = idPelicula;
         this.comentario = comentario;
         this.puntuacion = puntuacion;
-        this.fecha = fecha;
     }
 
-    public int getIdResena() { return idResena; }
-    public void setIdResena(int idResena) { this.idResena = idResena; }
-
+    // Getters y setters
     public int getIdUsuario() { return idUsuario; }
     public void setIdUsuario(int idUsuario) { this.idUsuario = idUsuario; }
 
@@ -34,7 +35,4 @@ public class Resena {
 
     public double getPuntuacion() { return puntuacion; }
     public void setPuntuacion(double puntuacion) { this.puntuacion = puntuacion; }
-
-    public String getFecha() { return fecha; }
-    public void setFecha(String fecha) { this.fecha = fecha; }
 }

@@ -1,4 +1,4 @@
-package com.example.cinedex.UI.Adapters;
+package com.example.cinedex_v2.UI.Adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;

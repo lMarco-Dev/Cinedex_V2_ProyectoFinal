@@ -10,79 +10,55 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
-import com.bumptech.glide.Glide; // Necesitarás Glide o Picasso
-import com.example.cinedex_v2.Data.Models.Movie;
+import com.bumptech.glide.Glide;
+import com.example.cinedex_v2.Data.Models.Pelicula;
 import com.example.cinedex_v2.R;
 import java.util.List;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {
 
-    private List<Movie> movies;
+    private List<Pelicula> peliculas;
     private Context context;
 
-    public MovieAdapter(List<Movie> movies, Context context) {
-        this.movies = movies;
+    public MovieAdapter(List<Pelicula> peliculas, Context context) {
+        this.peliculas = peliculas;
         this.context = context;
     }
 
-
-    /* ===========================================================================
-                                FABRICA LA TARJETA
-       =========================================================================== */
     @NonNull
     @Override
     public MovieViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_movie, parent, false); //Crea la vista visual
+        View view = LayoutInflater.from(context).inflate(R.layout.item_movie, parent, false);
         return new MovieViewHolder(view);
     }
 
-    /* ===========================================================================
-                                DECORADOR DE LA TARJETA
-       =========================================================================== */
     @Override
     public void onBindViewHolder(@NonNull MovieViewHolder holder, int position) {
+        Pelicula pelicula = peliculas.get(position);
 
-        //Obtenemos la pelicula para la posición.
-        Movie movie = movies.get(position);
+        holder.title.setText(pelicula.getTitulo());
+        holder.voteCount.setText(String.format("%.1f ⭐", pelicula.getNotaPromedio()));
 
-        //La rellenamos con lso datos.
-        holder.title.setText(movie.getTitle());
-        holder.voteCount.setText(movie.getVoteCount() + " Votos");
-
-        // Cargar imagen con Glide
-        String posterUrl = "https://image.tmdb.org/t/p/w500" + movie.getPosterPath();
         Glide.with(context)
-                .load(posterUrl)
+                .load(pelicula.getUrlPoster())
                 .into(holder.poster);
 
-        //Redireccionar
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int movieId = movie.getId();
-
-                Bundle bundle = new Bundle();
-                bundle.putInt("movieId", movieId);
-
-                Navigation.findNavController(view).navigate(
-                        R.id.action_homeFragment_to_movieDetailFragment,
-                        bundle
-                );
-            }
+        holder.itemView.setOnClickListener(v -> {
+            Bundle bundle = new Bundle();
+            bundle.putInt("movieId", pelicula.getIdPelicula());
+            Navigation.findNavController(v)
+                    .navigate(R.id.action_homeFragment_to_movieDetailFragment, bundle);
         });
     }
 
-    // Items en una lista
     @Override
     public int getItemCount() {
-        return movies.size();
+        return peliculas.size();
     }
 
-    // El ViewHolder
     public static class MovieViewHolder extends RecyclerView.ViewHolder {
         ImageView poster;
-        TextView title;
-        TextView voteCount;
+        TextView title, voteCount;
 
         public MovieViewHolder(@NonNull View itemView) {
             super(itemView);

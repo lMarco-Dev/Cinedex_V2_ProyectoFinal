@@ -1,0 +1,54 @@
+package com.example.cinedex_v2.Data.DTOs.Resena;
+
+import com.google.gson.annotations.SerializedName;
+
+public class ResenaResponseDto {
+    @SerializedName("IdResena")
+    private int idResena;
+
+    @SerializedName("IdUsuario")
+    private int idUsuario;
+
+    @SerializedName("IdPelicula")
+    private int idPelicula;
+
+    @SerializedName("Comentario")
+    private String comentario;
+
+    @SerializedName("Puntuacion")
+    private double puntuacion;
+
+    @SerializedName("Fecha")
+    private String fecha; // DateTime en C# → String en Android, luego puedes parsear si quieres
+
+    @SerializedName("Titulo")
+    private String tituloPelicula;
+
+    @SerializedName("PosterPeliculaURL")
+    private String posterPeliculaURL;
+
+    // Getters y setters
+    public int getIdResena() { return idResena; }
+    public void setIdResena(int idResena) { this.idResena = idResena; }
+
+    public int getIdUsuario() { return idUsuario; }
+    public void setIdUsuario(int idUsuario) { this.idUsuario = idUsuario; }
+
+    public int getIdPelicula() { return idPelicula; }
+    public void setIdPelicula(int idPelicula) { this.idPelicula = idPelicula; }
+
+    public String getComentario() { return comentario; }
+    public void setComentario(String comentario) { this.comentario = comentario; }
+
+    public double getPuntuacion() { return puntuacion; }
+    public void setPuntuacion(double puntuacion) { this.puntuacion = puntuacion; }
+
+    public String getFecha() { return fecha; }
+    public void setFecha(String fecha) { this.fecha = fecha; }
+
+    public String getTituloPelicula() { return tituloPelicula; }
+    public void setTituloPelicula(String tituloPelicula) { this.tituloPelicula = tituloPelicula; }
+
+    public String getPosterPeliculaURL() { return posterPeliculaURL; }
+    public void setPosterPeliculaURL(String posterPeliculaURL) { this.posterPeliculaURL = posterPeliculaURL; }
+}
