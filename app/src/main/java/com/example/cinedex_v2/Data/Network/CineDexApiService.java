@@ -49,6 +49,9 @@ public interface CineDexApiService {
     @POST("api/Usuarios/login")
     Call<UsuarioResponseDto> login(@Body UsuarioLoginRequestDto usuario);
 
+    @POST("api/Usuarios/login-admin")
+    Call<UsuarioResponseDto> loginAdmin(@Body UsuarioLoginRequestDto dto);
+
     @POST("api/Usuarios/register")
     Call<UsuarioResponseDto> register(@Body UsuarioRegisterRequestDto usuario);
 

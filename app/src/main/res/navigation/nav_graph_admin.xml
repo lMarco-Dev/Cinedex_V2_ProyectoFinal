@@ -1,0 +1,36 @@
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_admin"
+    app:startDestination="@id/peliculasFragment">
+
+    <fragment
+        android:id="@+id/peliculasFragment"
+        android:name="com.example.cinedex_v2.UI.AdminFragments.PeliculasFragment"
+        android:label="Películas"
+        tools:layout="@layout/fragment_peliculas" />
+
+    <fragment
+        android:id="@+id/eventosFragment"
+        android:name="com.example.cinedex_v2.UI.AdminFragments.EventosFragment"
+        android:label="Eventos"
+        tools:layout="@layout/fragment_eventos" />
+
+    <fragment
+        android:id="@+id/noticiasFragment"
+        android:name="com.example.cinedex_v2.UI.AdminFragments.NoticiasFragment"
+        android:label="Noticias"
+        tools:layout="@layout/fragment_noticias" />
+
+    <fragment
+        android:id="@+id/cinesFragment"
+        android:name="com.example.cinedex_v2.UI.AdminFragments.CinesFragment"
+        android:label="Cines"
+        tools:layout="@layout/fragment_cines" />
+
+    <fragment
+        android:id="@+id/funcionesFragment"
+        android:name="com.example.cinedex_v2.UI.AdminFragments.FuncionesFragment"
+        android:label="Funciones"
+        tools:layout="@layout/fragment_funciones" />
+</navigation>

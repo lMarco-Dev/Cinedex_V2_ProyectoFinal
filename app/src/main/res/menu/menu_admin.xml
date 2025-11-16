@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/peliculasFragment"
+        android:icon="@drawable/movie_24"
+        android:title="Películas" />
+
+    <item
+        android:id="@+id/eventosFragment"
+        android:icon="@drawable/evento_24"
+        android:title="Eventos" />
+
+    <item
+        android:id="@+id/noticiasFragment"
+        android:icon="@drawable/news_24"
+        android:title="Noticias" />
+
+    <item
+        android:id="@+id/cinesFragment"
+        android:icon="@drawable/cine_24"
+        android:title="Cines" />
+
+    <item
+        android:id="@+id/funcionesFragment"
+        android:icon="@drawable/funcion_24"
+        android:title="Funciones" />
+
+    <item
+        android:id="@+id/perfilAdminFragment"
+        android:icon="@drawable/admin_26"
+        android:title="Admin" />
+
+</menu>

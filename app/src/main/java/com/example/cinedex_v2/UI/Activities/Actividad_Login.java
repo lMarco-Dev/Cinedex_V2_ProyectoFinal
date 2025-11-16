@@ -13,9 +13,6 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.example.cinedex_v2.Data.Access.PreferenciasTerminos;
 import com.example.cinedex_v2.Data.DTOs.Usuario.UsuarioLoginRequestDto;
@@ -35,33 +32,31 @@ public class Actividad_Login extends AppCompatActivity {
     TextView txtIrARegistro;
     ImageView fondoLogin;
 
-    // -------------- Conectamos los botones y la cara ----------------------------
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.ly_actividad_login);
 
-        // -- Conectar Vistas ---
+        // ---- Conectar Vistas ----
         etUsuario = findViewById(R.id.campo_usuario);
         etPassword = findViewById(R.id.campo_contrasena);
         btnIniciarSesion = findViewById(R.id.btn_ingresar);
         txtIrARegistro = findViewById(R.id.txtRegistrar);
         fondoLogin = findViewById(R.id.fondo_login);
 
-        // -- Dirigir al registro --
+        // ---- Ir al registro ----
         txtIrARegistro.setOnClickListener(v -> {
             Intent intent = new Intent(this, Actividad_Registrarse.class);
             startActivity(intent);
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         });
 
-        //Boton iniciar Sesión
+        // ---- Botón iniciar sesión ----
         btnIniciarSesion.setOnClickListener(v -> {
             String username = etUsuario.getText().toString().trim();
             String password = etPassword.getText().toString().trim();
 
-            //Validaciones
             if(username.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "Llene todos los campos", Toast.LENGTH_SHORT).show();
                 return;
@@ -71,84 +66,98 @@ public class Actividad_Login extends AppCompatActivity {
         });
     }
 
+
     /* =============================================================
-                            CONECTAMOS A LA API
+                        INTENTO DE LOGIN (ADMIN O USER)
        ============================================================= */
-    private void intentarLogin(String username, String password){
-        //Creamos el DTO login
-        UsuarioLoginRequestDto loginRequestDto = new UsuarioLoginRequestDto(username, password);
+    private void intentarLogin(String username, String password) {
 
-        //Llamamos a la API
-        CineDexApiService apiService = CineDexApiClient.getApiService();
+        UsuarioLoginRequestDto dto = new UsuarioLoginRequestDto(username, password);
+        CineDexApiService api = CineDexApiClient.getApiService();
 
-        apiService.login(loginRequestDto).enqueue(new Callback<UsuarioResponseDto>() {
+        // ---- Si el usuario es "admin", usamos el endpoint para Admin ----
+        Call<UsuarioResponseDto> llamadaApi;
+
+        if (username.equals("admin")) {
+            llamadaApi = api.loginAdmin(dto);
+        } else {
+            llamadaApi = api.login(dto);
+        }
+
+        llamadaApi.enqueue(new Callback<UsuarioResponseDto>() {
             @Override
             public void onResponse(Call<UsuarioResponseDto> call, Response<UsuarioResponseDto> response) {
-                /*-----------------------------------------------------------------
-                                            LOGIN EXITOSO
-                -------------------------------------------------------------------*/
-                if(response.isSuccessful() && response.body() != null) {
 
-                    //Si el login es exitoso
-                    UsuarioResponseDto usuarioLogueado = response.body();
+                if (response.isSuccessful() && response.body() != null) {
 
-                    //Abre la mini memoria del telefono
-                    SharedPreferences prefsSesion = getSharedPreferences("sesion_usuario", Context.MODE_PRIVATE);
-                    SharedPreferences.Editor editor = prefsSesion.edit();
+                    UsuarioResponseDto usuario = response.body();
 
-                    //Guardamos los datos clase del usuario
-                    editor.putInt("ID_USUARIO", usuarioLogueado.getIdUsuario());
-                    editor.putString("NOMBRE_USUARIO", usuarioLogueado.getNombreUsuario());
-                    editor.putString("NOMBRES", usuarioLogueado.getNombres());
-                    editor.putString("APELLIDOS", usuarioLogueado.getApellidos());
-                    editor.putString("NOMBRE_ROL", usuarioLogueado.getRol());
-                    editor.putBoolean("ESTA_LOGUEADO", true);
-                    editor.apply();
+                    guardarSesion(usuario);
 
-                    //Enviamos al usuario a la actividad principal
-                    Toast.makeText(Actividad_Login.this, "Bienvenido, " + usuarioLogueado.getNombres() + "!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Actividad_Login.this,
+                            "Bienvenido, " + usuario.getNombres() + "!",
+                            Toast.LENGTH_SHORT).show();
 
-                    //Verificamos el rol
-                    String rol = usuarioLogueado.getRol();
-                    Intent intent;
+                    redirigirSegunRol(usuario);
 
-                    if(rol.equals("Admin")) {
-                        // Si es Admin, vamos directo a la actividad de Admin
-                        intent = new Intent(Actividad_Login.this, Actividad_Admin.class);
-
-                    } else {
-
-                        // Si es Usuario normal, verificamos si aceptó términos con la clase PreferenciasTerminos
-                        if (PreferenciasTerminos.terminosAceptados(Actividad_Login.this)) {
-                            intent = new Intent(Actividad_Login.this, Actividad_Principal.class);
-                        } else {
-                            intent = new Intent(Actividad_Login.this, Actividad_Terminos.class);
-                        }
-                    }
-
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
-                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                    finish();
-
-                    /*-----------------------------------------------------------------
-                                            LOGIN FALLIDO
-                    -------------------------------------------------------------------*/
                 } else {
-                    Log.e("[FALLO LOGIN]", "Código: " + response.code());
-                    Toast.makeText(Actividad_Login.this, "Usuario o contraseña incorrecta", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Actividad_Login.this,
+                            "Usuario o contraseña incorrecta",
+                            Toast.LENGTH_SHORT).show();
                 }
             }
 
-            /*-----------------------------------------------------------------
-                                        FALLO DE CONEXIÓN
-                -------------------------------------------------------------------*/
             @Override
             public void onFailure(Call<UsuarioResponseDto> call, Throwable t) {
-                //Error de red
-                Log.e("[LOGIN FALLO]", "Error de conexión: " + t.getMessage());
-                Toast.makeText(Actividad_Login.this, "Error de conexión con el servidor", Toast.LENGTH_SHORT).show();
+                Log.e("LOGIN_ERROR", t.getMessage());
+                Toast.makeText(Actividad_Login.this,
+                        "Error de conexión con el servidor",
+                        Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+
+    /* =============================================================
+                         GUARDAR DATOS DE SESIÓN
+       ============================================================= */
+    private void guardarSesion(UsuarioResponseDto usuario) {
+
+        SharedPreferences prefs = getSharedPreferences("sesion_usuario", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+
+        editor.putInt("ID_USUARIO", usuario.getIdUsuario());
+        editor.putString("NOMBRE_USUARIO", usuario.getNombreUsuario());
+        editor.putString("NOMBRES", usuario.getNombres());
+        editor.putString("APELLIDOS", usuario.getApellidos());
+        editor.putString("NOMBRE_ROL", usuario.getRol());
+        editor.putBoolean("ESTA_LOGUEADO", true);
+
+        editor.apply();
+    }
+
+
+    /* =============================================================
+                         REDIRECCIONAR SEGÚN ROL
+       ============================================================= */
+    private void redirigirSegunRol(UsuarioResponseDto usuario) {
+
+        Intent intent;
+
+        if (usuario.getRol().equals("Admin")) {
+            intent = new Intent(this, Actividad_Admin.class);
+        } else {
+
+            if (PreferenciasTerminos.terminosAceptados(this)) {
+                intent = new Intent(this, Actividad_Principal.class);
+            } else {
+                intent = new Intent(this, Actividad_Terminos.class);
+            }
+        }
+
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        finish();
     }
 }

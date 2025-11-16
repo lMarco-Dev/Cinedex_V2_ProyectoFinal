@@ -6,8 +6,8 @@ public class UsuarioLoginRequestDto {
 
     @SerializedName("NombreUsuario")
     private String nombreUsuario;
-    @SerializedName("Contrasena")
 
+    @SerializedName("Contrasena")
     private String contrasena;
 
     public UsuarioLoginRequestDto(String nombreUsuario, String contrasena) {
@@ -15,9 +15,20 @@ public class UsuarioLoginRequestDto {
         this.contrasena = contrasena;
     }
 
-    // Getters y Setters
-    public String getEmail() { return nombreUsuario; }
-    public void setEmail(String email) { this.nombreUsuario = nombreUsuario; }
-    public String getContrasena() { return contrasena; }
-    public void setContrasena(String contrasena) { this.contrasena = contrasena; }
+    // Getters y Setters correctos
+    public String getNombreUsuario() {
+        return nombreUsuario;
+    }
+
+    public void setNombreUsuario(String nombreUsuario) {
+        this.nombreUsuario = nombreUsuario;
+    }
+
+    public String getContrasena() {
+        return contrasena;
+    }
+
+    public void setContrasena(String contrasena) {
+        this.contrasena = contrasena;
+    }
 }

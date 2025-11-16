@@ -43,5 +43,7 @@ debe cerrar la aplicación y abstenerse de usarla.
 
 Gracias por utilizar CineDex.
 </string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
