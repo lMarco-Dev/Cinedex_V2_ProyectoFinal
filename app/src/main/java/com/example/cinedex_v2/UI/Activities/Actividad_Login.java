@@ -107,28 +107,32 @@ public class Actividad_Login extends AppCompatActivity {
                     //Enviamos al usuario a la actividad principal
                     Toast.makeText(Actividad_Login.this, "Bienvenido, " + usuarioLogueado.getNombres() + "!", Toast.LENGTH_SHORT).show();
 
-                    // Verifica la memoria para saber si acepto los terminos y condiciones
-                    SharedPreferences prefsTerminos = getSharedPreferences("CineDexPrefs", MODE_PRIVATE);
-                    boolean acepto = prefsTerminos.getBoolean("TERMINOS_ACEPTADOS", false);
-
-
+                    //Verificamos el rol
+                    String rol = usuarioLogueado.getRol();
                     Intent intent;
-                    if (!acepto) {
-                        // Si no ha aceptado, lo mandamos a Términos
-                        intent = new Intent(Actividad_Login.this, Actividad_Terminos.class);
-                        startActivity(intent);
-                        // No cerramos Login, para que pueda volver
+
+                    if(rol.equals("Admin")) {
+                        // Si es Admin, vamos directo a la actividad de Admin
+                        intent = new Intent(Actividad_Login.this, Actividad_Admin.class);
+
                     } else {
-                        // Si ya aceptó, lo mandamos a la Principal
-                        intent = new Intent(Actividad_Login.this, Actividad_Principal.class);
+                        // Si es Usuario normal, revisamos si aceptó términos
+                        SharedPreferences prefsTerminos = getSharedPreferences("CineDexPrefs", MODE_PRIVATE);
+                        boolean acepto = prefsTerminos.getBoolean("TERMINOS_ACEPTADOS", false);
 
-                        // para que no pueda presionar "Atrás" y volver al Login
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
-                        startActivity(intent);
-                        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                        finish();
+                        if(!acepto) {
+                            // Si no aceptó, lo mandamos a Términos
+                            intent = new Intent(Actividad_Login.this, Actividad_Terminos.class);
+                        } else {
+                            // Si ya aceptó, lo mandamos a la Principal
+                            intent = new Intent(Actividad_Login.this, Actividad_Principal.class);
+                        }
                     }
+
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                    finish();
 
                     /*-----------------------------------------------------------------
                                             LOGIN FALLIDO
