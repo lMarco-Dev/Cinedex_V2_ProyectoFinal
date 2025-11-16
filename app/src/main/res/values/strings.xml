@@ -1,3 +1,32 @@
 <resources>
-    <string name="app_name">Cinedex_V2</string>
+    <string name="app_name">Cinedex</string>
+    <string name="welcome_text">Bienvenido a\n<font color="#007A33">CINEDEX</font></string>
+    <string name="arrow_icon">Icono de flecha</string>
+    <string name="fondo_login">Fondo de inicio de sesión</string>
+
+    <string name="terminos_placeholder">
+        "Bienvenido a Cinedex\n\n
+        Estos son los Términos y Condiciones que rigen el uso de esta aplicación móvil (\"la App\"). Al descargar, instalar o usar la App, aceptas estar sujeto a estos términos. Si no estás de acuerdo, no uses la App.\n\n
+
+        1. Aceptación de los Términos\n
+        Al crear una cuenta o usar Cinedex, confirmas que tienes al menos 13 años de edad y que aceptas cumplir con todas las políticas aquí descritas.\n\n
+
+        2. Cuentas de Usuario\n
+        Eres responsable de mantener la confidencialidad de tu cuenta y contraseña. Eres el único responsable de toda la actividad que ocurra bajo tu cuenta. Notifícanos inmediatamente sobre cualquier uso no autorizado.\n\n
+
+        3. Contenido del Usuario (Reseñas)\n
+        Tú conservas la propiedad de las reseñas y comentarios que publicas (\"Tu Contenido\"). Sin embargo, al publicar, otorgas a Cinedex una licencia mundial, no exclusiva y libre de regalías para mostrar, distribuir y reproducir Tu Contenido dentro de la App.\n\n
+        No está permitido publicar contenido que sea ilegal, ofensivo, difamatorio, spam o que infrinja los derechos de autor de terceros.\n\n
+
+        4. Uso de APIs de Terceros (TMDB)\n
+        La información sobre películas, pósters y sinopsis es proporcionada por The Movie Database (TMDB). No garantizamos la precisión, integridad o actualidad de esta información. El uso de estos datos está sujeto a los términos de servicio de TMDB.\n\n
+
+        5. Exclusión de Garantías\n
+        La App se proporciona \"tal cual\", sin garantías de ningún tipo. No garantizamos que la App funcionará sin interrupciones o libre de errores.\n\n
+
+        6. Cambios en los Términos\n
+        Nos reservamos el derecho de modificar estos términos en cualquier momento. Te notificaremos sobre cambios importantes. El uso continuado de la App después de los cambios constituye tu aceptación de los nuevos términos.\n\n
+
+        Al hacer clic en \"Aceptar y Continuar\", confirmas que has leído y entendido estos Términos y Condiciones."
+    </string>
 </resources>
