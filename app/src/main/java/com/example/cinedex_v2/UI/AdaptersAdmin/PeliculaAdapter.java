@@ -48,10 +48,9 @@ public class PeliculaAdapter extends RecyclerView.Adapter<PeliculaAdapter.Pelicu
         PeliculaResponse pelicula = peliculasList.get(position);
 
         holder.tvTitulo.setText(pelicula.getTitulo());
-
         String info = pelicula.getCategoria() + " - " + pelicula.getDuracionMin() + " min";
         holder.tvCategoriaDuracion.setText(info);
-
+        holder.tvDirectorPais.setText(pelicula.getDirector() + " · " + pelicula.getPais());
         holder.tvNota.setText(String.format(Locale.US, "%.1f", pelicula.getNotaPromedio()));
 
         Glide.with(context)
@@ -60,7 +59,6 @@ public class PeliculaAdapter extends RecyclerView.Adapter<PeliculaAdapter.Pelicu
                 .error(R.drawable.ic_delete) // Debes tener un ícono de error
                 .into(holder.ivPoster);
 
-        // --- Esta es la lógica clave que tu MovieAdapter NO tiene ---
         holder.btnEditar.setOnClickListener(v -> listener.onEditarClick(pelicula));
         holder.btnEliminar.setOnClickListener(v -> listener.onEliminarClick(pelicula));
     }
@@ -70,20 +68,21 @@ public class PeliculaAdapter extends RecyclerView.Adapter<PeliculaAdapter.Pelicu
         return peliculasList.size();
     }
 
-    public static class PeliculaViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTitulo, tvCategoriaDuracion, tvNota;
-        ImageButton btnEditar, btnEliminar;
+    public class PeliculaViewHolder extends RecyclerView.ViewHolder {
         ImageView ivPoster;
+        TextView tvTitulo, tvCategoriaDuracion, tvSinopsis, tvDirectorPais, tvNota;
+        ImageButton btnEditar, btnEliminar;
 
         public PeliculaViewHolder(@NonNull View itemView) {
             super(itemView);
-            // Asegúrate que los IDs coincidan con tu 'item_pelicula.xml'
             ivPoster = itemView.findViewById(R.id.iv_poster);
             tvTitulo = itemView.findViewById(R.id.tv_titulo_pelicula);
             tvCategoriaDuracion = itemView.findViewById(R.id.tv_categoria_duracion);
+            tvDirectorPais = itemView.findViewById(R.id.tv_director_pais);
             tvNota = itemView.findViewById(R.id.tv_nota);
             btnEditar = itemView.findViewById(R.id.btn_editar);
             btnEliminar = itemView.findViewById(R.id.btn_eliminar);
         }
     }
+
 }
