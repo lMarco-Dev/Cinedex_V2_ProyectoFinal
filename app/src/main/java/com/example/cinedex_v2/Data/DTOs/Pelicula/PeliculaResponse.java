@@ -1,6 +1,8 @@
 package com.example.cinedex_v2.Data.DTOs.Pelicula;
 
-public class PeliculaResponse {
+import java.io.Serializable;
+
+public class PeliculaResponse implements Serializable {
     private int idPelicula;
     private String titulo;
     private String descripcion;
