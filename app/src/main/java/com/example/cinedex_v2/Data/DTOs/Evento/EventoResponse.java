@@ -1,8 +1,9 @@
 package com.example.cinedex_v2.Data.DTOs.Evento;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class EventoResponse {
+public class EventoResponse implements Serializable {
     private int idEvento;
     private String titulo;
     private String descripcion;

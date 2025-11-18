@@ -16,7 +16,6 @@ import com.example.cinedex_v2.Data.DTOs.Pelicula.PeliculaResponse; // (Usa tu DT
 import java.util.List;
 import java.util.Locale;
 
-// Este adaptador es DIFERENTE de tu MovieAdapter
 public class PeliculaAdapter extends RecyclerView.Adapter<PeliculaAdapter.PeliculaViewHolder> {
 
     private List<PeliculaResponse> peliculasList;
@@ -70,7 +69,7 @@ public class PeliculaAdapter extends RecyclerView.Adapter<PeliculaAdapter.Pelicu
 
     public class PeliculaViewHolder extends RecyclerView.ViewHolder {
         ImageView ivPoster;
-        TextView tvTitulo, tvCategoriaDuracion, tvSinopsis, tvDirectorPais, tvNota;
+        TextView tvTitulo, tvCategoriaDuracion, tvDirectorPais, tvNota;
         ImageButton btnEditar, btnEliminar;
 
         public PeliculaViewHolder(@NonNull View itemView) {

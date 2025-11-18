@@ -23,6 +23,7 @@ import com.example.cinedex_v2.R;
 import com.example.cinedex_v2.UI.AdaptersAdmin.PeliculaAdapter;
 import com.example.cinedex_v2.Data.DTOs.Pelicula.PeliculaRequest;
 import com.example.cinedex_v2.Data.DTOs.Pelicula.PeliculaResponse;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -205,6 +206,42 @@ public class PeliculasFragment extends Fragment
 
     @Override
     public void onEliminarClick(PeliculaResponse pelicula) {
-        // Aquí tu diálogo de eliminar si lo tienes
+
+        // 1. Crear el diálogo de confirmación
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Confirmar Eliminación")
+                .setMessage("¿Estás seguro de que deseas eliminar la película: \"" + pelicula.getTitulo() + "\"? Esta acción no se puede deshacer.")
+
+                // 2. Botón "Cancelar"
+                .setNegativeButton("Cancelar", (dialog, which) -> dialog.dismiss())
+
+                // 3. Botón "Eliminar" (con la lógica de API)
+                .setPositiveButton("Eliminar", (dialog, which) -> {
+
+                    mostrarCarga(true); // Muestra la barra de progreso
+
+                    // Tu ApiService ya tiene 'eliminarPelicula'
+                    Call<Void> call = apiService.eliminarPelicula(pelicula.getIdPelicula());
+
+                    call.enqueue(new Callback<Void>() {
+                        @Override
+                        public void onResponse(Call<Void> call, Response<Void> response) {
+                            if (response.isSuccessful()) {
+                                Toast.makeText(getContext(), "Película eliminada", Toast.LENGTH_SHORT).show();
+                                cargarPeliculasDesdeApi(); // Recarga la lista
+                            } else {
+                                mostrarCarga(false);
+                                Toast.makeText(getContext(), "Error al eliminar la película", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Void> call, Throwable t) {
+                            mostrarCarga(false);
+                            Toast.makeText(getContext(), "Error de red: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                })
+                .show(); // 4. Mostrar el diálogo
     }
 }
