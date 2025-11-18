@@ -15,6 +15,9 @@
         android:theme="@style/Theme.Cinedex_V2"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".UI.AdminFragments.GuardarNoticiaDialog"
+            android:exported="false" />
+        <activity
             android:name=".UI.Activities.Actividad_Admin"
             android:exported="false" />
         <activity

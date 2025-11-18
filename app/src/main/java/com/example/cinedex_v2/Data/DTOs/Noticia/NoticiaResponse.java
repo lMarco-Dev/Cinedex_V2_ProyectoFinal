@@ -1,12 +1,14 @@
 package com.example.cinedex_v2.Data.DTOs.Noticia;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class NoticiaResponse {
+public class NoticiaResponse implements Serializable {
     private int idNoticia;
     private String titulo;
     private String resumen;
     private String urlImagen;
+    private String urlYoutube; // <-- NUEVO
     private Date fechaPublicacion;
 
     // Getters y Setters
@@ -21,6 +23,9 @@ public class NoticiaResponse {
 
     public String getUrlImagen() { return urlImagen; }
     public void setUrlImagen(String urlImagen) { this.urlImagen = urlImagen; }
+
+    public String getUrlYoutube() { return urlYoutube; } // <-- NUEVO
+    public void setUrlYoutube(String urlYoutube) { this.urlYoutube = urlYoutube; } // <-- NUEVO
 
     public Date getFechaPublicacion() { return fechaPublicacion; }
     public void setFechaPublicacion(Date fechaPublicacion) { this.fechaPublicacion = fechaPublicacion; }

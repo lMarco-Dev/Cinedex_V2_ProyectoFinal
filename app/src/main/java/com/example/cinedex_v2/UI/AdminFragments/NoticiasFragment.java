@@ -1,66 +1,214 @@
 package com.example.cinedex_v2.UI.AdminFragments;
 
+import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.cinedex_v2.Data.Cloudinary.CloudinaryUploader;
+import com.example.cinedex_v2.Data.Network.CineDexApiClient;
+import com.example.cinedex_v2.Data.Network.CineDexApiService;
 import com.example.cinedex_v2.R;
+import com.example.cinedex_v2.UI.AdaptersAdmin.NoticiaAdapter;
+import com.example.cinedex_v2.Data.DTOs.Noticia.NoticiaRequest;
+import com.example.cinedex_v2.Data.DTOs.Noticia.NoticiaResponse;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link NoticiasFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class NoticiasFragment extends Fragment {
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+public class NoticiasFragment extends Fragment
+        implements NoticiaAdapter.OnNoticiaClickListener, GuardarNoticiaDialog.OnNoticiaGuardadaListener {
 
-    public NoticiasFragment() {
-        // Required empty public constructor
-    }
+    private RecyclerView rvNoticias;
+    private NoticiaAdapter adapter;
+    private List<NoticiaResponse> listaNoticias;
+    private ProgressBar progressBar;
+    private CineDexApiService apiService;
+    private FloatingActionButton fabAgregar;
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment NoticiasFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static NoticiasFragment newInstance(String param1, String param2) {
-        NoticiasFragment fragment = new NoticiasFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        // Asegúrate que fragment_noticias.xml tenga los IDs correctos
+        return inflater.inflate(R.layout.fragment_noticias, container, false);
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        TextView titulo = requireActivity().findViewById(R.id.txt_panel_admin);
+        titulo.setText("Noticias");
+
+        rvNoticias = view.findViewById(R.id.rv_noticias);
+        progressBar = view.findViewById(R.id.progress_bar_noticias);
+        fabAgregar = view.findViewById(R.id.fab_agregar_noticia);
+
+        apiService = CineDexApiClient.getApiService();
+        listaNoticias = new ArrayList<>();
+        adapter = new NoticiaAdapter(getContext(), listaNoticias, this);
+        rvNoticias.setAdapter(adapter);
+
+        fabAgregar.setOnClickListener(v -> {
+            GuardarNoticiaDialog dialog = GuardarNoticiaDialog.newInstance(null);
+            dialog.setTargetFragment(NoticiasFragment.this, 0);
+            dialog.show(getParentFragmentManager(), "GuardarNoticiaDialog");
+        });
+
+        cargarNoticiasDesdeApi();
+    }
+
+    private void cargarNoticiasDesdeApi() {
+        mostrarCarga(true);
+        Call<List<NoticiaResponse>> call = apiService.getNoticias();
+
+        call.enqueue(new Callback<List<NoticiaResponse>>() {
+            @Override
+            public void onResponse(Call<List<NoticiaResponse>> call, Response<List<NoticiaResponse>> response) {
+                mostrarCarga(false);
+                if (response.isSuccessful() && response.body() != null) {
+                    listaNoticias.clear();
+                    listaNoticias.addAll(response.body());
+                    adapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<NoticiaResponse>> call, Throwable t) {
+                mostrarCarga(false);
+                Toast.makeText(getContext(), "Error de red", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    public void onNoticiaGuardada(NoticiaRequest request, @Nullable Uri imagenUri, @Nullable Integer idToUpdate) {
+
+        // CASO 1: IMAGEN NUEVA (Subida Asíncrona)
+        if (imagenUri != null) {
+            mostrarCarga(true);
+            File file = CloudinaryUploader.getFileFromUri(requireContext(), imagenUri);
+
+            new Thread(() -> {
+                try {
+                    String url = CloudinaryUploader.uploadImage(file);
+                    requireActivity().runOnUiThread(() -> {
+                        request.setUrlImagen(url); // Asignar URL
+                        guardarNoticiaEnApi(request, idToUpdate); // Llamar API *DESPUÉS*
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    requireActivity().runOnUiThread(() -> {
+                        mostrarCarga(false);
+                        Toast.makeText(getContext(), "Error al subir imagen", Toast.LENGTH_SHORT).show();
+                    });
+                }
+            }).start();
+        }
+        // CASO 2: SIN IMAGEN NUEVA (Llamada Directa)
+        else {
+            if (idToUpdate != null) {
+                // Modo Editar: Buscar URL antigua
+                String urlAntigua = listaNoticias.stream()
+                        .filter(n -> n.getIdNoticia() == idToUpdate)
+                        .findFirst()
+                        .map(NoticiaResponse::getUrlImagen)
+                        .orElse("https://i.imgur.com/GzP738B.png");
+                request.setUrlImagen(urlAntigua);
+            } else {
+                // Modo Crear: Asignar Placeholder OBLIGATORIO para evitar error de BD
+                request.setUrlImagen("https://i.imgur.com/GzP738B.png");
+            }
+            // Llamada directa porque ya tenemos la URL
+            guardarNoticiaEnApi(request, idToUpdate);
         }
     }
 
+    private void guardarNoticiaEnApi(NoticiaRequest request, @Nullable Integer idToUpdate) {
+        mostrarCarga(true);
+        Call<Void> call;
+
+        if (idToUpdate == null) {
+            call = apiService.crearNoticia(request);
+        } else {
+            call = apiService.editarNoticia(idToUpdate, request);
+        }
+
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(getContext(), "Noticia guardada exitosamente", Toast.LENGTH_SHORT).show();
+                    cargarNoticiasDesdeApi();
+                } else {
+                    mostrarCarga(false);
+                    try {
+                        String errorBody = response.errorBody().string();
+                        Log.e("API_ERROR", "Error: " + errorBody);
+                    } catch (Exception e) {}
+                    Toast.makeText(getContext(), "Error al guardar", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                mostrarCarga(false);
+                Toast.makeText(getContext(), "Error de red", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_noticias, container, false);
+    public void onEditarClick(NoticiaResponse noticia) {
+        GuardarNoticiaDialog dialog = GuardarNoticiaDialog.newInstance(noticia);
+        dialog.setTargetFragment(this, 0);
+        dialog.show(getParentFragmentManager(), "EditarNoticia");
+    }
+
+    @Override
+    public void onEliminarClick(NoticiaResponse noticia) {
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Eliminar Noticia")
+                .setMessage("¿Eliminar " + noticia.getTitulo() + "?")
+                .setNegativeButton("Cancelar", (d, w) -> d.dismiss())
+                .setPositiveButton("Eliminar", (d, w) -> {
+                    mostrarCarga(true);
+                    apiService.eliminarNoticia(noticia.getIdNoticia()).enqueue(new Callback<Void>() {
+                        @Override
+                        public void onResponse(Call<Void> call, Response<Void> response) {
+                            if (response.isSuccessful()) cargarNoticiasDesdeApi();
+                            else {
+                                mostrarCarga(false);
+                                Toast.makeText(getContext(), "Error al eliminar", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                        @Override
+                        public void onFailure(Call<Void> call, Throwable t) {
+                            mostrarCarga(false);
+                        }
+                    });
+                }).show();
+    }
+
+    private void mostrarCarga(boolean cargando) {
+        progressBar.setVisibility(cargando ? View.VISIBLE : View.GONE);
+        rvNoticias.setVisibility(cargando ? View.GONE : View.VISIBLE);
     }
 }

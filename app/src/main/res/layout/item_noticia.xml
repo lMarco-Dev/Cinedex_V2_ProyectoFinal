@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardBackgroundColor="#2C2C2C"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/iv_noticia_imagen"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="#444"
+            android:scaleType="centerCrop"
+            app:layout_constraintDimensionRatio="16:9"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@tools:sample/backgrounds/scenic" />
+
+        <ImageView
+            android:id="@+id/iv_has_video"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_margin="8dp"
+            android:src="@android:drawable/ic_media_play"
+            app:tint="@color/white"
+            android:visibility="gone"
+            tools:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@id/iv_noticia_imagen"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <LinearLayout
+            android:id="@+id/layout_botones"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            android:gravity="center_vertical"
+            android:paddingStart="8dp"
+            android:paddingEnd="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_noticia_imagen"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <ImageButton
+                android:id="@+id/btn_editar"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Editar"
+                android:src="@drawable/ic_edit"
+                app:tint="#42A5F5" />
+
+            <ImageButton
+                android:id="@+id/btn_eliminar"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Eliminar"
+                android:src="@drawable/ic_delete"
+                app:tint="#E53935" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_noticia_titulo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="8dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="Título de la Noticia"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toStartOf="@id/layout_botones"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_noticia_imagen" />
+
+        <TextView
+            android:id="@+id/tv_noticia_fecha"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="12dp"
+            android:drawableStart="@drawable/ic_calendar"
+            android:drawablePadding="6dp"
+            android:gravity="center_vertical"
+            android:text="18 Nov, 2025"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            android:textColor="#BDBDBD"
+            app:drawableTint="#BDBDBD"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/tv_noticia_titulo"
+            app:layout_constraintStart_toStartOf="@id/tv_noticia_titulo"
+            app:layout_constraintTop_toBottomOf="@id/tv_noticia_titulo" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>
