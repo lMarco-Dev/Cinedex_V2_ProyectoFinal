@@ -4,6 +4,7 @@ public class CineRequest {
     private String nombre;
     private String ciudad;
     private String direccion;
+    private String urlImagen; // <--- AGREGADO
 
     // Getters y Setters
     public String getNombre() { return nombre; }
@@ -14,4 +15,7 @@ public class CineRequest {
 
     public String getDireccion() { return direccion; }
     public void setDireccion(String direccion) { this.direccion = direccion; }
+
+    public String getUrlImagen() { return urlImagen; } // <--- AGREGADO
+    public void setUrlImagen(String urlImagen) { this.urlImagen = urlImagen; } // <--- AGREGADO
 }
