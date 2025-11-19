@@ -5,16 +5,17 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="24dp"
-    android:background="@drawable/dialog_background"> <TextView
-    android:id="@+id/dialog_title"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="Escribe tu Reseña"
-    android:textSize="20sp"
-    android:textStyle="bold"
-    android:textColor="@android:color/black" />
+    android:background="@drawable/dialog_background">
 
-    <!-- Calificación de estrella y comentario -->
+    <TextView
+        android:id="@+id/dialog_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Escribe tu Reseña"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black" />
+
     <RatingBar
         android:id="@+id/dialog_rating_bar"
         android:layout_width="wrap_content"
@@ -22,19 +23,25 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="16dp"
         android:numStars="5"
-        android:stepSize="0.5"
-        android:theme="@style/Theme.AppCompat.Light" /><EditText
+        android:stepSize="1.0"
+        android:progressTint="@color/gold_light"
+        style="?android:attr/ratingBarStyleIndicator"
+        android:isIndicator="false" />
+
+    <EditText
         android:id="@+id/dialog_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:hint="Escribe tu comentario aquí..."
+        android:textColorHint="#808080"
+        android:textColor="@color/white"
         android:inputType="textMultiLine"
         android:minLines="3"
         android:gravity="top"
-        android:background="@drawable/edittext_background" android:padding="12dp" />
+        android:background="@drawable/edittext_background"
+        android:padding="12dp" />
 
-    <!--Botones de cancelar y guardar-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -42,7 +49,6 @@
         android:layout_marginTop="24dp"
         android:gravity="end">
 
-        <!--Boton para cancelar la reseña-->
         <Button
             android:id="@+id/dialog_button_cancelar"
             android:layout_width="wrap_content"
@@ -51,14 +57,13 @@
             style="@style/Widget.AppCompat.Button.Borderless"
             android:textColor="#808080" />
 
-        <!-- Boton para guardar la reseña -->
         <Button
             android:id="@+id/dialog_button_guardar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Guardar"
             android:layout_marginStart="16dp"
-            android:backgroundTint="#1ED760" android:textColor="@android:color/white" />
+            android:backgroundTint="@color/gold_light"
+            android:textColor="@android:color/black" />
     </LinearLayout>
-
 </LinearLayout>

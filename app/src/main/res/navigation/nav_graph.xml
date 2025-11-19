@@ -7,9 +7,9 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.example.cinedex_v2.UI.Fragments.HomeFragment"
+        android:name="com.example.cinedex_v2.UI.UsersFragments.HomeUserFragment"
         android:label="Home"
-        tools:layout="@layout/ly_fragment_home">
+        tools:layout="@layout/fragment_home_user">
 
         <action
             android:id="@+id/action_homeFragment_to_movieDetailFragment"
@@ -19,7 +19,7 @@
     <fragment
         android:id="@+id/movieDetailFragment"
 
-        android:name="com.example.cinedex_v2.UI.Fragments.MovieDetailFragment"
+        android:name="com.example.cinedex_v2.UI.UsersFragments.MovieDetailFragment"
 
         android:label="Detalle"
         tools:layout="@layout/ly_fragment_movie_detail">
@@ -31,12 +31,12 @@
 
     <fragment
         android:id="@+id/eventosFragment"
-        android:name="com.example.cinedex_v2.UI.Fragments.EventosFragment"
+        android:name="com.example.cinedex_v2.UI.UsersFragments.EventosFragment"
         android:label="Eventos"
         tools:layout="@layout/ly_anuncios" />
     <fragment
         android:id="@+id/profileFragment"
-        android:name="com.example.cinedex_v2.UI.Fragments.ProfileFragment"
+        android:name="com.example.cinedex_v2.UI.UsersFragments.ProfileFragment"
         android:label="Perfil"
         tools:layout="@layout/ly_fragment_profile" />
 

@@ -1,14 +1,16 @@
-// Archivo: UI/Fragments/MovieDetailFragment.java
-package com.example.cinedex_v2.UI.Fragments;
+package com.example.cinedex_v2.UI.UsersFragments;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -24,7 +26,6 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.bumptech.glide.Glide;
 import com.example.cinedex_v2.Data.DTOs.Pelicula.PeliculaResponse;
 import com.example.cinedex_v2.Data.DTOs.Resena.ResenaRequestDto;
-import com.example.cinedex_v2.Data.DTOs.Resena.MensajeRespuestaDto;
 import com.example.cinedex_v2.Data.DTOs.Resena.ResenaResponseDto;
 import com.example.cinedex_v2.Data.Network.CineDexApiClient;
 import com.example.cinedex_v2.Data.Network.CineDexApiService;
@@ -36,13 +37,10 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-// Implementa la interfaz del DIÁLOGO
-public class MovieDetailFragment extends Fragment implements ResenaDialogFragment.ResenaDialogListener {
+public class MovieDetailFragment extends Fragment {
 
     private int movieId;
-
-    // Servicio de API
-    private CineDexApiService cineDexApiService;
+    private CineDexApiService apiService;
 
     // Vistas
     private ImageView detailBackdrop, detailPoster;
@@ -52,7 +50,6 @@ public class MovieDetailFragment extends Fragment implements ResenaDialogFragmen
     private Toolbar toolbar;
     private TextView detailTextRating, detailTextRuntime, detailTextYear;
 
-    // Variable para guardar la película actual
     private PeliculaResponse peliculaActual;
 
     @Override
@@ -61,7 +58,7 @@ public class MovieDetailFragment extends Fragment implements ResenaDialogFragmen
         if (getArguments() != null) {
             this.movieId = getArguments().getInt("movieId");
         }
-        cineDexApiService = CineDexApiClient.getApiService();
+        apiService = CineDexApiClient.getApiService();
     }
 
     @Override
@@ -74,7 +71,7 @@ public class MovieDetailFragment extends Fragment implements ResenaDialogFragmen
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Enlazar las vistas
+        // Vincular vistas
         toolbar = view.findViewById(R.id.detail_toolbar);
         detailBackdrop = view.findViewById(R.id.detail_backdrop);
         detailPoster = view.findViewById(R.id.detail_poster);
@@ -88,36 +85,38 @@ public class MovieDetailFragment extends Fragment implements ResenaDialogFragmen
 
         setupToolbar();
 
-        detailReviewButton.setOnClickListener(v -> mostrarDialogResena());
+        // Click en "Escribir Reseña" -> Abre el diálogo
+        detailReviewButton.setOnClickListener(v -> mostrarDialogoResena());
 
-        fetchMovieDetails();
+        cargarDetallePelicula();
     }
 
     private void setupToolbar() {
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         if (activity != null) {
             activity.setSupportActionBar(toolbar);
-            activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            activity.getSupportActionBar().setDisplayShowTitleEnabled(false);
+            if (activity.getSupportActionBar() != null) {
+                activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                activity.getSupportActionBar().setDisplayShowTitleEnabled(false);
+            }
         }
         toolbar.setNavigationOnClickListener(v -> NavHostFragment.findNavController(this).popBackStack());
     }
 
-    private void fetchMovieDetails() {
-        Call<PeliculaResponse> call = cineDexApiService.getPelicula(movieId);
+    private void cargarDetallePelicula() {
+        Call<PeliculaResponse> call = apiService.getPelicula(movieId);
         call.enqueue(new Callback<PeliculaResponse>() {
             @Override
             public void onResponse(Call<PeliculaResponse> call, Response<PeliculaResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     updateUI(response.body());
                 } else {
-                    detailDescription.setText("No se pudieron cargar los detalles.");
+                    if(getContext()!=null) Toast.makeText(getContext(), "Error al cargar película", Toast.LENGTH_SHORT).show();
                 }
             }
-
             @Override
             public void onFailure(Call<PeliculaResponse> call, Throwable t) {
-                detailDescription.setText("Error de conexión.");
+                if(getContext()!=null) Toast.makeText(getContext(), "Error de conexión", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -127,18 +126,18 @@ public class MovieDetailFragment extends Fragment implements ResenaDialogFragmen
 
         detailTitle.setText(pelicula.getTitulo());
         detailDescription.setText(pelicula.getDescripcion());
-
-        float rating = (float) pelicula.getNotaPromedio();
-        detailRating.setRating(rating);
+        detailRating.setRating((float) pelicula.getNotaPromedio());
         detailTextRating.setText(String.format(Locale.US, "%.1f", pelicula.getNotaPromedio()));
 
-        detailTextYear.setText("N/A"); // opcional: agregar año si lo tienes en tu backend
+        // Si tu API tuviera año, lo pondrías aquí. Si no, N/A.
+        detailTextYear.setText("N/A");
+
         detailTextRuntime.setText(pelicula.getDuracionMin() != null ? pelicula.getDuracionMin() + " min" : "N/A");
 
         if (getContext() != null) {
             Glide.with(getContext())
                     .load(pelicula.getUrlPoster())
-                    .placeholder(R.drawable.bg_poster_placeholder)
+                    .placeholder(R.drawable.bg_poster_placeholder) // Asegúrate de tener esta imagen o usa ic_launcher_background
                     .into(detailPoster);
 
             Glide.with(getContext())
@@ -148,71 +147,84 @@ public class MovieDetailFragment extends Fragment implements ResenaDialogFragmen
         }
     }
 
-    private void mostrarDialogResena() {
-        ResenaDialogFragment dialog = new ResenaDialogFragment();
-        dialog.setResenaDialogListener(this);
-        dialog.show(getParentFragmentManager(), "ResenaDialog");
+    // =================================================================
+    //  MÉTODO PARA ABRIR EL DIÁLOGO DE RESEÑA (Integrado aquí)
+    // =================================================================
+    private void mostrarDialogoResena() {
+        if (getContext() == null) return;
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+
+        // Inflamos TU diseño XML (dialog_nueva_resena.xml)
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_nueva_resena, null);
+        builder.setView(dialogView);
+
+        AlertDialog dialog = builder.create();
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
+
+        // Vincular vistas del diálogo
+        RatingBar ratingBar = dialogView.findViewById(R.id.dialog_rating_bar);
+        EditText etComentario = dialogView.findViewById(R.id.dialog_edit_text);
+        Button btnCancelar = dialogView.findViewById(R.id.dialog_button_cancelar);
+        Button btnGuardar = dialogView.findViewById(R.id.dialog_button_guardar);
+
+        // Acciones
+        btnCancelar.setOnClickListener(v -> dialog.dismiss());
+
+        btnGuardar.setOnClickListener(v -> {
+            float puntaje = ratingBar.getRating();
+            String comentario = etComentario.getText().toString().trim();
+
+            if (puntaje == 0) {
+                Toast.makeText(getContext(), "Por favor, califica la película", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            enviarResenaApi(puntaje, comentario, dialog);
+        });
+
+        dialog.show();
     }
 
-    @Override
-    public void onResenaGuardada(String comentario, float puntaje) {
-        int idUsuario = getUsuarioIdLogueado();
+    private void enviarResenaApi(float puntaje, String comentario, AlertDialog dialog) {
+        if (getActivity() == null) return;
 
-        if (this.peliculaActual == null || idUsuario == -1) {
-            Toast.makeText(getContext(), "Error: Datos de la película no cargados.", Toast.LENGTH_SHORT).show();
+        SharedPreferences prefs = getActivity().getSharedPreferences("sesion_usuario", Context.MODE_PRIVATE);
+        int idUsuario = prefs.getInt("ID_USUARIO", -1);
+
+        if (idUsuario == -1) {
+            Toast.makeText(getContext(), "Debes iniciar sesión para reseñar", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        if (puntaje < 0.5f) puntaje = 0.5f;
-        if (puntaje > 5.0f) puntaje = 5.0f;
-
-        String texto = comentario != null ? comentario : "";
-        if (texto.length() > 1000) texto = texto.substring(0, 1000);
-
         ResenaRequestDto request = new ResenaRequestDto(
                 idUsuario,
-                this.peliculaActual.getIdPelicula(),
-                texto,
+                peliculaActual.getIdPelicula(),
+                comentario,
                 puntaje
         );
 
-        enviarResena(request);
-    }
-
-    private void enviarResena(ResenaRequestDto request) {
-        Toast.makeText(getContext(), "Guardando reseña...", Toast.LENGTH_SHORT).show();
-
-        // Llamada al método correcto de la API
-        Call<ResenaResponseDto> call = cineDexApiService.crearResena(request);
-
-        call.enqueue(new Callback<ResenaResponseDto>() {
+        apiService.crearResena(request).enqueue(new Callback<ResenaResponseDto>() {
             @Override
             public void onResponse(Call<ResenaResponseDto> call, Response<ResenaResponseDto> response) {
-                if (getContext() == null) return;
+                if (response.isSuccessful()) {
+                    Toast.makeText(getContext(), "¡Reseña guardada!", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
 
-                String mensaje;
-                if (response.isSuccessful() && response.body() != null) {
-                    mensaje = "Reseña guardada correctamente.";
+                    // Opcional: Recargar los datos de la película para actualizar el promedio
+                    cargarDetallePelicula();
                 } else {
-                    mensaje = "Error al guardar reseña. Código: " + response.code();
+                    Toast.makeText(getContext(), "Error al guardar", Toast.LENGTH_SHORT).show();
                 }
-
-                Toast.makeText(getContext(), mensaje, Toast.LENGTH_LONG).show();
             }
 
             @Override
             public void onFailure(Call<ResenaResponseDto> call, Throwable t) {
-                if (getContext() != null) {
-                    Toast.makeText(getContext(), "Error de conexión: " + t.getMessage(), Toast.LENGTH_LONG).show();
-                }
+                Toast.makeText(getContext(), "Error de conexión", Toast.LENGTH_SHORT).show();
             }
         });
-
-    }
-
-
-    private int getUsuarioIdLogueado() {
-        SharedPreferences prefs = getActivity().getSharedPreferences("sesion_usuario", Context.MODE_PRIVATE);
-        return prefs.getInt("ID_USUARIO", -1);
     }
 }

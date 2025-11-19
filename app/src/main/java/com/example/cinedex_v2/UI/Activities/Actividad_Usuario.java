@@ -28,7 +28,7 @@ import com.example.cinedex_v2.Data.DTOs.Usuario.UsuarioUpdateRequestDto;
 import com.example.cinedex_v2.Data.Network.CineDexApiClient;
 import com.example.cinedex_v2.Data.Network.CineDexApiService;
 import com.example.cinedex_v2.R;
-import com.example.cinedex_v2.UI.Adapters.ResenaAdapter;
+import com.example.cinedex_v2.UI.AdaptersUser.ResenaAdapter;
 import com.google.android.material.appbar.MaterialToolbar;
 
 import java.util.List;
