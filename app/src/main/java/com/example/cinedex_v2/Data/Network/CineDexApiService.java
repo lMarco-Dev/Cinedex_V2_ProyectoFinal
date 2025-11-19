@@ -78,6 +78,10 @@ public interface CineDexApiService {
     @GET("api/Funciones")
     Call<List<FuncionResponse>> getFunciones();
 
+    // ¡ESTE ES EL QUE TE FALTA! 👇
+    @GET("api/Funciones/cine/{idCine}")
+    Call<List<FuncionResponse>> getPorCine(@Path("idCine") int idCine);
+
     @POST("api/Funciones")
     Call<Void> crearFuncion(@Body FuncionRequest funcion);
 

@@ -22,7 +22,7 @@
         android:title="Cines" />
 
     <item
-        android:id="@+id/funcionesFragment"
+        android:id="@+id/inicioFuncionesFragment"
         android:icon="@drawable/funcion_24"
         android:title="Funciones" />
 

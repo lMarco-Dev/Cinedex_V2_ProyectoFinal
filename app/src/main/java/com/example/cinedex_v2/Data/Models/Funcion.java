@@ -10,20 +10,26 @@ public class Funcion {
     private Date fechaHora;
     private String idioma;
 
+    // --- NUEVOS CAMPOS ---
+    private String formato;
+    private double precio;
+
     // Constructor vacío
     public Funcion() {}
 
-    // Constructor completo
-    public Funcion(int idFuncion, int idPelicula, int idCine, String sala, Date fechaHora, String idioma) {
+    // Constructor completo actualizado
+    public Funcion(int idFuncion, int idPelicula, int idCine, String sala, Date fechaHora, String idioma, String formato, double precio) {
         this.idFuncion = idFuncion;
         this.idPelicula = idPelicula;
         this.idCine = idCine;
         this.sala = sala;
         this.fechaHora = fechaHora;
         this.idioma = idioma;
+        this.formato = formato;
+        this.precio = precio;
     }
 
-    // Getters y Setters
+    // Getters y Setters existentes...
     public int getIdFuncion() { return idFuncion; }
     public void setIdFuncion(int idFuncion) { this.idFuncion = idFuncion; }
 
@@ -41,4 +47,11 @@ public class Funcion {
 
     public String getIdioma() { return idioma; }
     public void setIdioma(String idioma) { this.idioma = idioma; }
+
+    // --- NUEVOS GETTERS Y SETTERS ---
+    public String getFormato() { return formato; }
+    public void setFormato(String formato) { this.formato = formato; }
+
+    public double getPrecio() { return precio; }
+    public void setPrecio(double precio) { this.precio = precio; }
 }

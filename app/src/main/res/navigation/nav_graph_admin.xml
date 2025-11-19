@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -29,8 +30,15 @@
         tools:layout="@layout/fragment_cines" />
 
     <fragment
+        android:id="@+id/inicioFuncionesFragment"
+        android:name="com.example.cinedex_v2.UI.AdminFragments.FragmentInicioFunciones"
+        android:label="Funciones"
+        tools:layout="@layout/fragment_inicio_funciones" />
+
+    <fragment
         android:id="@+id/funcionesFragment"
         android:name="com.example.cinedex_v2.UI.AdminFragments.FuncionesFragment"
-        android:label="Funciones"
+        android:label="Lista de Funciones"
         tools:layout="@layout/fragment_funciones" />
+
 </navigation>
