@@ -21,6 +21,7 @@ public class PeliculaAdapter extends RecyclerView.Adapter<PeliculaAdapter.Pelicu
     private List<PeliculaResponse> peliculasList;
     private Context context;
     private OnPeliculaClickListener listener;
+    
 
     // Esta interfaz es la que necesita tu PeliculasFragment
     public interface OnPeliculaClickListener {

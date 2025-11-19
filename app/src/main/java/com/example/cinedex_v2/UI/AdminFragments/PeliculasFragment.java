@@ -2,7 +2,6 @@ package com.example.cinedex_v2.UI.AdminFragments;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,15 +58,17 @@ public class PeliculasFragment extends Fragment
         btnAdd = requireActivity().findViewById(R.id.btn_add);
         TextView titulo = requireActivity().findViewById(R.id.txt_panel_admin);
 
-        // Cambiar título dinámico (si quieres)
-        titulo.setText("Películas");
+        // Cambiar título dinámico
+        if (titulo != null) titulo.setText("Películas");
 
         // Asignar acción al botón "+"
-        btnAdd.setOnClickListener(v -> {
-            GuardarPeliculaDialog dialog = GuardarPeliculaDialog.newInstance(null);
-            dialog.setTargetFragment(PeliculasFragment.this, 0);
-            dialog.show(getParentFragmentManager(), "GuardarPeliculaDialog");
-        });
+        if (btnAdd != null) {
+            btnAdd.setOnClickListener(v -> {
+                GuardarPeliculaDialog dialog = GuardarPeliculaDialog.newInstance(null);
+                dialog.setTargetFragment(PeliculasFragment.this, 0);
+                dialog.show(getParentFragmentManager(), "GuardarPeliculaDialog");
+            });
+        }
 
         // ---- Recycler y carga ----
         rvPeliculas = view.findViewById(R.id.rv_peliculas);
@@ -114,48 +115,54 @@ public class PeliculasFragment extends Fragment
     }
 
     /* ==============================================================
-                        SUBIR A CLOUDINARY
+                        SUBIR A CLOUDINARY Y GUARDAR
        ============================================================== */
     @Override
     public void onPeliculaGuardada(PeliculaRequest request, @Nullable Uri imagenUri, @Nullable Integer peliculaIdToUpdate) {
 
+        // CASO 1: SELECCIONÓ IMAGEN NUEVA (Hay que subirla)
         if (imagenUri != null) {
-            // Subir a Cloudinary
+            mostrarCarga(true); // Bloqueamos pantalla
             File file = CloudinaryUploader.getFileFromUri(requireContext(), imagenUri);
 
             new Thread(() -> {
                 try {
-                    //Subida de imagen
+                    // 1. Subida de imagen
                     String url = CloudinaryUploader.uploadImage(file);
 
-                    //Actualizamos request con la URL final
+                    // 2. Volver al hilo principal
                     requireActivity().runOnUiThread(() -> {
                         request.setUrlPoster(url);
-                        //Guardamos la pelicula en el backend
+                        // 3. Guardar en API (SOLO AQUI)
                         guardarPeliculaEnApi(request, peliculaIdToUpdate);
                     });
                 } catch (Exception e) {
                     e.printStackTrace();
                     requireActivity().runOnUiThread(() -> {
+                        mostrarCarga(false);
                         Toast.makeText(getContext(), "Error al subir la imagen: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     });
                 }
             }).start();
-        } else {
-            // 2. No se selecciono ninguna imagen
-            if(peliculaIdToUpdate != null) {
-                // Mantener la URL antigua
-                request.setUrlPoster(
-                        listaPeliculas.stream()
-                                .filter(p -> p.getIdPelicula() == peliculaIdToUpdate)
-                                .findFirst()
-                                .map(PeliculaResponse::getUrlPoster)
-                                .orElse(null)
-                );
+
+        }
+        // CASO 2: NO SELECCIONÓ IMAGEN (Mantenemos la vieja o nulo)
+        else {
+            if (peliculaIdToUpdate != null) {
+                // Modo Edición: Buscar URL antigua
+                String urlAntigua = listaPeliculas.stream()
+                        .filter(p -> p.getIdPelicula() == peliculaIdToUpdate)
+                        .findFirst()
+                        .map(PeliculaResponse::getUrlPoster)
+                        .orElse(null);
+                request.setUrlPoster(urlAntigua);
             }
+
+            // Guardar en API inmediatamente (SOLO AQUI)
+            guardarPeliculaEnApi(request, peliculaIdToUpdate);
         }
 
-        guardarPeliculaEnApi(request, peliculaIdToUpdate);
+        // ¡IMPORTANTE! Aquí abajo NO debe haber ninguna llamada a guardarPeliculaEnApi()
     }
 
     private void guardarPeliculaEnApi(PeliculaRequest request, @Nullable Integer peliculaIdToUpdate) {
@@ -173,6 +180,7 @@ public class PeliculasFragment extends Fragment
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
+                    Toast.makeText(getContext(), "Película guardada correctamente", Toast.LENGTH_SHORT).show();
                     cargarPeliculasDesdeApi();
                 } else {
                     mostrarCarga(false);
@@ -206,21 +214,13 @@ public class PeliculasFragment extends Fragment
 
     @Override
     public void onEliminarClick(PeliculaResponse pelicula) {
-
-        // 1. Crear el diálogo de confirmación
+        // Diálogo de confirmación
         new MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Confirmar Eliminación")
                 .setMessage("¿Estás seguro de que deseas eliminar la película: \"" + pelicula.getTitulo() + "\"? Esta acción no se puede deshacer.")
-
-                // 2. Botón "Cancelar"
                 .setNegativeButton("Cancelar", (dialog, which) -> dialog.dismiss())
-
-                // 3. Botón "Eliminar" (con la lógica de API)
                 .setPositiveButton("Eliminar", (dialog, which) -> {
-
-                    mostrarCarga(true); // Muestra la barra de progreso
-
-                    // Tu ApiService ya tiene 'eliminarPelicula'
+                    mostrarCarga(true);
                     Call<Void> call = apiService.eliminarPelicula(pelicula.getIdPelicula());
 
                     call.enqueue(new Callback<Void>() {
@@ -228,7 +228,7 @@ public class PeliculasFragment extends Fragment
                         public void onResponse(Call<Void> call, Response<Void> response) {
                             if (response.isSuccessful()) {
                                 Toast.makeText(getContext(), "Película eliminada", Toast.LENGTH_SHORT).show();
-                                cargarPeliculasDesdeApi(); // Recarga la lista
+                                cargarPeliculasDesdeApi();
                             } else {
                                 mostrarCarga(false);
                                 Toast.makeText(getContext(), "Error al eliminar la película", Toast.LENGTH_SHORT).show();
@@ -242,6 +242,6 @@ public class PeliculasFragment extends Fragment
                         }
                     });
                 })
-                .show(); // 4. Mostrar el diálogo
+                .show();
     }
 }
