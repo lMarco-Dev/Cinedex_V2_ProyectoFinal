@@ -8,7 +8,6 @@
     android:background="@color/gray_dark"
     tools:context=".UI.Activities.Actividad_Admin">
 
-    <!-- SOLO FONDO (Toolbar decorativo) -->
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar_admin"
         android:layout_width="0dp"
@@ -19,7 +18,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- 🔰 HEADER PERSONALIZADO (VISIBLE SIEMPRE) -->
     <LinearLayout
         android:id="@+id/header_admin"
         android:layout_width="0dp"
@@ -30,7 +28,6 @@
         android:paddingEnd="16dp"
         android:paddingTop="12dp"
         android:paddingBottom="12dp"
-
         app:layout_constraintTop_toBottomOf="@id/toolbar_admin"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -45,6 +42,18 @@
             android:textSize="22sp"
             android:textStyle="bold" />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_nav_playlists"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Listas"
+            android:textColor="@color/emerald_green"
+            android:textStyle="bold"
+            app:icon="@drawable/ic_playlist_play"
+            app:iconTint="@color/emerald_green"
+            android:layout_marginEnd="8dp"/>
+
         <ImageView
             android:id="@+id/btn_add"
             android:layout_width="30dp"
@@ -54,7 +63,6 @@
             app:tint="@color/gold_dark" />
     </LinearLayout>
 
-    <!-- NAVHOST PARA FRAGMENTS -->
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_fragment_admin"
         android:name="androidx.navigation.fragment.NavHostFragment"
@@ -62,13 +70,11 @@
         android:layout_height="0dp"
         app:defaultNavHost="true"
         app:navGraph="@navigation/nav_graph_admin"
-
         app:layout_constraintTop_toBottomOf="@id/header_admin"
         app:layout_constraintBottom_toTopOf="@id/bottom_navigation_admin"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- BOTTOM NAVIGATION -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation_admin"
         android:layout_width="0dp"
@@ -79,7 +85,6 @@
         app:itemTextColor="@color/nav_item_selector"
         app:labelVisibilityMode="labeled"
         app:menu="@menu/menu_admin"
-
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

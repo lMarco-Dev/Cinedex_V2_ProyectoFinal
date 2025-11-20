@@ -10,6 +10,10 @@ import com.example.cinedex_v2.Data.DTOs.Noticia.NoticiaRequest;
 import com.example.cinedex_v2.Data.DTOs.Noticia.NoticiaResponse;
 import com.example.cinedex_v2.Data.DTOs.Pelicula.PeliculaRequest;
 import com.example.cinedex_v2.Data.DTOs.Pelicula.PeliculaResponse;
+import com.example.cinedex_v2.Data.DTOs.PeliculaPlaylist.PeliculaPlaylistRequest;
+import com.example.cinedex_v2.Data.DTOs.Playlist.PlaylistOrdenDto;
+import com.example.cinedex_v2.Data.DTOs.Playlist.PlaylistRequest;
+import com.example.cinedex_v2.Data.DTOs.Playlist.PlaylistResponse;
 import com.example.cinedex_v2.Data.DTOs.Resena.ResenaRequestDto;
 import com.example.cinedex_v2.Data.DTOs.Resena.ResenaResponseDto;
 import com.example.cinedex_v2.Data.DTOs.Usuario.UsuarioLoginRequestDto;
@@ -136,6 +140,28 @@ public interface CineDexApiService {
     @DELETE("api/Resenas/{id}")
     Call<Void> eliminarResena(@Path("id") int id);
 
+    // ================== PLAYLISTS (NUEVO) ==================
+    @GET("api/Playlists")
+    Call<List<PlaylistResponse>> getPlaylists();
 
+    // Endpoint para reordenar (Drag & Drop)
+    @POST("api/Playlists/reordenar")
+    Call<Void> reordenarPlaylists(@Body List<PlaylistOrdenDto> listaOrdenada);
+
+    @POST("api/Playlists")
+    Call<PlaylistResponse> crearPlaylist(@Body PlaylistRequest playlist); // Devuelve objeto creado
+
+    @PUT("api/Playlists/{id}")
+    Call<Void> editarPlaylist(@Path("id") int id, @Body PlaylistRequest playlist);
+
+    @DELETE("api/Playlists/{id}")
+    Call<Void> eliminarPlaylist(@Path("id") int id);
+
+    // Gestión de películas dentro de playlist
+    @POST("api/Playlists/{idPlaylist}/agregar")
+    Call<Void> agregarPeliculaAPlaylist(@Path("idPlaylist") int idPlaylist, @Body PeliculaPlaylistRequest dto);
+
+    @DELETE("api/Playlists/{idPlaylist}/remover/{idPelicula}")
+    Call<Void> removerPeliculaDePlaylist(@Path("idPlaylist") int idPlaylist, @Path("idPelicula") int idPelicula);
 
 }

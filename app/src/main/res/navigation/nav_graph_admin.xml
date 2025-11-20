@@ -12,6 +12,12 @@
         tools:layout="@layout/fragment_peliculas" />
 
     <fragment
+        android:id="@+id/playlistsFragment"
+        android:name="com.example.cinedex_v2.UI.AdminFragments.PlaylistFragment"
+        android:label="Gestión de Playlists"
+        tools:layout="@layout/fragment_playlists" />
+
+    <fragment
         android:id="@+id/eventosFragment"
         android:name="com.example.cinedex_v2.UI.AdminFragments.EventosFragment"
         android:label="Eventos"

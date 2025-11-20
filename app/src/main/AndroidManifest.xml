@@ -15,6 +15,9 @@
         android:theme="@style/Theme.Cinedex_V2"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".UI.AdminFragments.PlaylistsFragment"
+            android:exported="false" />
+        <activity
             android:name=".UI.UsersFragments.HomeUserFragment"
             android:exported="false" />
         <activity
