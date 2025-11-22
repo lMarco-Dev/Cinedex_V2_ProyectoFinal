@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="#1F1F1F">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Seleccionar Película"
+        android:textColor="@color/gold_light"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp"/>
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Elige una película"
+        android:textColorHint="@color/text_gray"
+        app:boxStrokeColor="@color/text_gray">
+
+        <AutoCompleteTextView
+            android:id="@+id/ac_pelicula_busqueda"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none"
+            android:textColor="@color/white"
+            android:background="@android:color/transparent"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_agregar_confirmar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:text="Agregar a la Lista"
+        android:layout_marginTop="24dp"
+        android:backgroundTint="@color/gold_light"
+        android:textColor="@android:color/black"
+        android:textStyle="bold"/>
+</LinearLayout>

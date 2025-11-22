@@ -47,4 +47,10 @@
         android:label="Lista de Funciones"
         tools:layout="@layout/fragment_funciones" />
 
+    <fragment
+        android:id="@+id/playlistDetailFragment"
+        android:name="com.example.cinedex_v2.UI.AdminFragments.PlaylistDetailFragment"
+        android:label="Detalle Playlist"
+        tools:layout="@layout/fragment_playlist_detail" />
+
 </navigation>

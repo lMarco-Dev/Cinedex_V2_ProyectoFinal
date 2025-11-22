@@ -164,4 +164,7 @@ public interface CineDexApiService {
     @DELETE("api/Playlists/{idPlaylist}/remover/{idPelicula}")
     Call<Void> removerPeliculaDePlaylist(@Path("idPlaylist") int idPlaylist, @Path("idPelicula") int idPelicula);
 
+    // CORREGIDO: Debe coincidir con [HttpGet("{idPlaylist}/peliculas")] del Backend
+    @GET("api/Playlists/{idPlaylist}/peliculas")
+    Call<List<PeliculaResponse>> getPeliculasDePlaylist(@Path("idPlaylist") int idPlaylist);
 }

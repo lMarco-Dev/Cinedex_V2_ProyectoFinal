@@ -12,6 +12,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -180,5 +181,20 @@ public class PlaylistFragment extends Fragment
                         public void onFailure(Call<Void> call, Throwable t) {}
                     });
                 }).show();
+    }
+
+    @Override
+    public void onItemClick(PlaylistResponse playlist) {
+        Bundle bundle = new Bundle();
+        bundle.putInt("id_playlist", playlist.getIdPlaylist());
+        bundle.putString("nombre_playlist", playlist.getNombre());
+
+        try {
+            // Asegúrate de agregar este destino en tu nav_graph_admin.xml
+            Navigation.findNavController(requireView())
+                    .navigate(R.id.playlistDetailFragment, bundle);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -21,6 +21,7 @@ public class PlaylistAdminAdapter extends RecyclerView.Adapter<PlaylistAdminAdap
     public interface OnPlaylistClickListener {
         void onEditarClick(PlaylistResponse playlist);
         void onEliminarClick(PlaylistResponse playlist);
+        void onItemClick(PlaylistResponse playlist);
     }
 
     public PlaylistAdminAdapter(List<PlaylistResponse> lista, OnPlaylistClickListener listener) {
@@ -43,6 +44,9 @@ public class PlaylistAdminAdapter extends RecyclerView.Adapter<PlaylistAdminAdap
 
         holder.btnEditar.setOnClickListener(v -> listener.onEditarClick(p));
         holder.btnEliminar.setOnClickListener(v -> listener.onEliminarClick(p));
+
+        // 2. AGREGA ESTO: Al tocar la tarjeta, entramos al detalle
+        holder.itemView.setOnClickListener(v -> listener.onItemClick(p));
     }
 
     // Método para Drag & Drop
