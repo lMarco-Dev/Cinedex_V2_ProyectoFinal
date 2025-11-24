@@ -24,15 +24,18 @@ public class NoticiaAdapter extends RecyclerView.Adapter<NoticiaAdapter.NoticiaV
     private List<NoticiaResponse> noticiasList;
     private Context context;
     private OnNoticiaClickListener listener;
+    private boolean isEditable;
 
     public interface OnNoticiaClickListener {
         void onEditarClick(NoticiaResponse noticia);
         void onEliminarClick(NoticiaResponse noticia);
+        void onItemClick(NoticiaResponse noticia);
     }
 
-    public NoticiaAdapter(Context context, List<NoticiaResponse> noticiasList, OnNoticiaClickListener listener){
+    public NoticiaAdapter(Context context, List<NoticiaResponse> noticiasList, boolean isEditable,OnNoticiaClickListener listener){
         this.context = context;
         this.noticiasList = noticiasList;
+        this.isEditable = isEditable;
         this.listener = listener;
     }
 
@@ -70,8 +73,20 @@ public class NoticiaAdapter extends RecyclerView.Adapter<NoticiaAdapter.NoticiaV
                 .error(R.drawable.ic_delete)
                 .into(holder.ivImagen);
 
-        holder.btnEditar.setOnClickListener(v -> listener.onEditarClick(noticia));
-        holder.btnEliminar.setOnClickListener(v -> listener.onEliminarClick(noticia));
+        // LÓGICA DE VISIBILIDAD
+        if (isEditable) {
+            holder.btnEditar.setVisibility(View.VISIBLE);
+            holder.btnEliminar.setVisibility(View.VISIBLE);
+
+            holder.btnEditar.setOnClickListener(v -> listener.onEditarClick(noticia));
+            holder.btnEliminar.setOnClickListener(v -> listener.onEliminarClick(noticia));
+        } else {
+            holder.btnEditar.setVisibility(View.GONE);
+            holder.btnEliminar.setVisibility(View.GONE);
+
+            // Clic en toda la tarjeta para ver detalle
+            holder.itemView.setOnClickListener(v -> listener.onItemClick(noticia));
+        }
     }
 
     @Override

@@ -52,7 +52,7 @@ public class GuardarFuncionDialog extends BottomSheetDialogFragment {
 
     // Listas estáticas para dropdowns
     private static final String[] SALAS = {"Sala 1", "Sala 2", "Sala 3", "Sala 4", "Sala IMAX", "Sala 4DX"};
-    private static final String[] IDIOMAS = {"DOB", "SUB", "ORIGINAL"};
+    private static final String[] IDIOMAS = {"DOB", "SUB"};
     private static final String[] FORMATOS = {"2D", "3D", "IMAX"};
 
     // Interfaz para devolver la lista de funciones al fragmento

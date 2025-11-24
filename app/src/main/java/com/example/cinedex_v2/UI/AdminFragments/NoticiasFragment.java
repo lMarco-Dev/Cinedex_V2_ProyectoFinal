@@ -63,7 +63,7 @@ public class NoticiasFragment extends Fragment
 
         apiService = CineDexApiClient.getApiService();
         listaNoticias = new ArrayList<>();
-        adapter = new NoticiaAdapter(getContext(), listaNoticias, this);
+        adapter = new NoticiaAdapter(getContext(), listaNoticias, true, this);
         rvNoticias.setAdapter(adapter);
 
         fabAgregar.setOnClickListener(v -> {
@@ -205,6 +205,11 @@ public class NoticiasFragment extends Fragment
                         }
                     });
                 }).show();
+    }
+
+    @Override
+    public void onItemClick(NoticiaResponse noticia) {
+        // Vacío intencionalmente. En Admin usamos los botones de editar/borrar.
     }
 
     private void mostrarCarga(boolean cargando) {

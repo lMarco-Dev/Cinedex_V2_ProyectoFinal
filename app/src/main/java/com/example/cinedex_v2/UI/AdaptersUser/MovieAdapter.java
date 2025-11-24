@@ -5,12 +5,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.cinedex_v2.Data.DTOs.Pelicula.PeliculaResponse;
 import com.example.cinedex_v2.R;
 import java.util.List;
+import java.util.Locale;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> {
 
@@ -42,7 +45,18 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         PeliculaResponse pelicula = list.get(position);
-        Glide.with(context).load(pelicula.getUrlPoster()).into(holder.ivPoster);
+
+        // 1. CARGAR IMAGEN
+        Glide.with(context)
+                .load(pelicula.getUrlPoster())
+                .placeholder(R.drawable.ic_launcher_background)
+                .into(holder.ivPoster);
+
+        //2. Cargamos el texto
+        holder.tvTitle.setText(pelicula.getTitulo());
+
+        //3. La nota promedio
+        holder.tvVote.setText(String.format(Locale.US, "%.1f ⭐", pelicula.getNotaPromedio()));
 
         // 4. AQUI ESTÁ LA MAGIA: Detectar el clic y avisar
         holder.itemView.setOnClickListener(v -> {
@@ -57,9 +71,14 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView ivPoster;
+        TextView tvTitle, tvVote; // <-- Declarar los TextViews
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            // Enlazar con los IDs de item_movie.xml
             ivPoster = itemView.findViewById(R.id.movie_poster);
+            tvTitle = itemView.findViewById(R.id.movie_title);       // <-- Enlazar Título
+            tvVote = itemView.findViewById(R.id.movie_vote_count);   // <-- Enlazar Nota
         }
     }
 }

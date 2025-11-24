@@ -30,14 +30,21 @@
     </fragment>
 
     <fragment
-        android:id="@+id/eventosFragment"
-        android:name="com.example.cinedex_v2.UI.UsersFragments.EventosFragment"
-        android:label="Eventos"
-        tools:layout="@layout/ly_anuncios" />
+        android:id="@+id/socialFragment"
+        android:name="com.example.cinedex_v2.UI.UsersFragments.SocialFragment"
+        android:label="Novedades"
+        tools:layout="@layout/fragment_social_container" />
+
     <fragment
-        android:id="@+id/profileFragment"
-        android:name="com.example.cinedex_v2.UI.UsersFragments.ProfileFragment"
-        android:label="Perfil"
-        tools:layout="@layout/ly_fragment_profile" />
+        android:id="@+id/noticiaDetailFragment"
+        android:name="com.example.cinedex_v2.UI.UsersFragments.NoticiaDetailFragment"
+        android:label="Noticia"
+        tools:layout="@layout/fragment_noticia_detail">
+
+        <argument
+            android:name="noticia_data"
+            app:argType="com.example.cinedex_v2.Data.DTOs.Noticia.NoticiaResponse" />
+    </fragment>
+
 
 </navigation>

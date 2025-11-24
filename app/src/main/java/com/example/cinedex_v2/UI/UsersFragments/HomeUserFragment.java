@@ -1,22 +1,24 @@
 package com.example.cinedex_v2.UI.UsersFragments;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation; // Importante para navegar
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.cinedex_v2.Data.Network.CineDexApiClient;
-import com.example.cinedex_v2.Data.DTOs.Pelicula.PeliculaResponse;
+import com.example.cinedex_v2.Data.DTOs.Playlist.PlaylistResponse;
 import com.example.cinedex_v2.R;
+import com.example.cinedex_v2.UI.AdaptersUser.HomePlaylistAdapter;
+import com.example.cinedex_v2.UI.AdaptersUser.HomePlaylistAdapter;
 import com.example.cinedex_v2.UI.AdaptersUser.MovieAdapter;
-import com.example.cinedex_v2.UI.AdaptersUser.Top10Adapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,10 +27,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-// 1. Implementar la interfaz OnMovieClickListener
 public class HomeUserFragment extends Fragment implements MovieAdapter.OnMovieClickListener {
 
-    private RecyclerView rvMasVisto, rvAccion, rvTop10, rvRomance;
+    private RecyclerView rvMain;
+    private HomePlaylistAdapter parentAdapter;
+    private List<PlaylistResponse> listaPlaylists = new ArrayList<>();
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -38,61 +41,50 @@ public class HomeUserFragment extends Fragment implements MovieAdapter.OnMovieCl
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        rvMasVisto = view.findViewById(R.id.rv_mas_visto);
-        rvAccion = view.findViewById(R.id.rv_accion);
-        rvTop10 = view.findViewById(R.id.rv_top10);
-        rvRomance = view.findViewById(R.id.rv_romance);
-        cargarPeliculas();
+
+        rvMain = view.findViewById(R.id.rv_home_principal);
+        rvMain.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        // Inicializamos el adaptador padre
+        parentAdapter = new HomePlaylistAdapter(getContext(), listaPlaylists, this);
+        rvMain.setAdapter(parentAdapter);
+
+        cargarHomeDinamico();
     }
 
-    private void cargarPeliculas() {
-        CineDexApiClient.getApiService().getPeliculas().enqueue(new Callback<List<PeliculaResponse>>() {
+    private void cargarHomeDinamico() {
+        // Llamamos a la API de Playlists
+        CineDexApiClient.getApiService().getPlaylists().enqueue(new Callback<List<PlaylistResponse>>() {
             @Override
-            public void onResponse(Call<List<PeliculaResponse>> call, Response<List<PeliculaResponse>> response) {
+            public void onResponse(Call<List<PlaylistResponse>> call, Response<List<PlaylistResponse>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    List<PeliculaResponse> todas = response.body();
-                    List<PeliculaResponse> listaAccion = new ArrayList<>();
-                    List<PeliculaResponse> listaRomance = new ArrayList<>();
+                    listaPlaylists.clear();
 
-                    for (PeliculaResponse p : todas) {
-                        if (p.getCategoria() != null) {
-                            if (p.getCategoria().equalsIgnoreCase("Acción")) listaAccion.add(p);
-                            if (p.getCategoria().equalsIgnoreCase("Romance")) listaRomance.add(p);
+                    // Solo agregamos playlists que tengan al menos 1 película
+                    for (PlaylistResponse p : response.body()) {
+                        if (p.getPeliculas() != null && !p.getPeliculas().isEmpty()) {
+                            listaPlaylists.add(p);
                         }
                     }
 
-                    // 2. Pasar 'this' como listener al crear los adapters
-                    setupRecycler(rvMasVisto, new MovieAdapter(getContext(), todas, HomeUserFragment.this));
-                    setupRecycler(rvAccion, new MovieAdapter(getContext(), listaAccion, HomeUserFragment.this));
-                    setupRecycler(rvRomance, new MovieAdapter(getContext(), listaRomance, HomeUserFragment.this));
-
-                    // Para Top10 tendrías que actualizar su adapter igual que hicimos con MovieAdapter
-                    // setupRecycler(rvTop10, new Top10Adapter(getContext(), todas, this));
+                    parentAdapter.notifyDataSetChanged();
                 }
             }
+
             @Override
-            public void onFailure(Call<List<PeliculaResponse>> call, Throwable t) { }
+            public void onFailure(Call<List<PlaylistResponse>> call, Throwable t) {
+                Toast.makeText(getContext(), "Error de conexión", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
-    private void setupRecycler(RecyclerView rv, RecyclerView.Adapter adapter) {
-        rv.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-        rv.setAdapter(adapter);
-    }
-
-    // 3. Implementar el método de clic
+    // Click en una película (para ir al detalle)
     @Override
     public void onMovieClick(int movieId) {
-        // Crear el paquete con el ID
         Bundle bundle = new Bundle();
         bundle.putInt("movieId", movieId);
-
-        // Navegar al detalle (Asegúrate que el ID de la acción o destino sea correcto en tu nav_graph)
         try {
-            Navigation.findNavController(requireView())
-                    .navigate(R.id.movieDetailFragment, bundle);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            Navigation.findNavController(requireView()).navigate(R.id.movieDetailFragment, bundle);
+        } catch (Exception e) { e.printStackTrace(); }
     }
 }

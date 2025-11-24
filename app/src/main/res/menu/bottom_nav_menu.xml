@@ -6,9 +6,9 @@
         android:title="Inicio" />
 
     <item
-        android:id="@+id/eventosFragment"
+        android:id="@+id/socialFragment"
         android:icon="@drawable/ic_evento"
-        android:title="Eventos" />
+        android:title="Social" />
 
     <item
         android:id="@+id/profileFragment"
