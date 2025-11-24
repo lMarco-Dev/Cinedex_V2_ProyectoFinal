@@ -12,11 +12,13 @@
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
         android:elevation="0dp">
+
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar_decorativo"
             android:layout_width="match_parent"
             android:layout_height="45dp"
             android:background="@color/emerald_green" />
+
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar_noticia"
             android:layout_width="match_parent"
@@ -25,6 +27,7 @@
             app:navigationIconTint="@color/white"
             app:title="Detalle Noticia"
             app:titleTextColor="@color/white"/>
+
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
@@ -96,10 +99,23 @@
                     android:visibility="gone"
                     tools:visibility="visible">
 
-                    <WebView
-                        android:id="@+id/webview_video"
+                    <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"/>
+                        android:layout_height="match_parent">
+
+                        <ImageView
+                            android:id="@+id/iv_miniatura_video"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            android:alpha="0.7" /> <ImageView
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_play_circle"
+                        app:tint="#FFFFFF"/>
+                    </FrameLayout>
+
                 </androidx.cardview.widget.CardView>
 
             </LinearLayout>

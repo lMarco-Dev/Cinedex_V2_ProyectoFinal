@@ -2,65 +2,122 @@ package com.example.cinedex_v2.UI.UsersFragments;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.cinedex_v2.Data.DTOs.Evento.EventoResponse;
+import com.example.cinedex_v2.Data.Network.CineDexApiClient;
 import com.example.cinedex_v2.R;
+import com.example.cinedex_v2.UI.AdaptersAdmin.EventoAdapter;
+import com.example.cinedex_v2.UI.AdaptersAdmin.NoticiaAdapter;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ListaEventosFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class ListaEventosFragment extends Fragment {
+import java.util.ArrayList;
+import java.util.List;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
-    public ListaEventosFragment() {
-        // Required empty public constructor
-    }
+public class ListaEventosFragment extends Fragment implements EventoAdapter.OnEventoClickListener {
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ListaEventosFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ListaEventosFragment newInstance(String param1, String param2) {
-        ListaEventosFragment fragment = new ListaEventosFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
+    private RecyclerView rvEventos;
+    private ProgressBar progressBar;
+    private TextView tvSinEventos;
+    private EventoAdapter adapter;
+    private List<EventoResponse> listaEventos = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_evento_detail, container, false);
+        return inflater.inflate(R.layout.fragment_lista_eventos, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        //1. Vincular vistas
+        rvEventos = view.findViewById(R.id.rv_lista_eventos);
+        progressBar = view.findViewById(R.id.pb_eventos);
+        tvSinEventos = view.findViewById(R.id.tv_sin_eventos);
+
+        //2. Configurar RecyclerView
+        rvEventos.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        // ----- Pasamos 'false' para ocultar botones
+        adapter = new EventoAdapter(getContext(), listaEventos, false, this);
+        rvEventos.setAdapter(adapter);
+
+        //3. Cargar datos
+        cargarEventosDesdeApi();
+    }
+
+    private void cargarEventosDesdeApi() {
+        mostrarCarga(true);
+
+        CineDexApiClient.getApiService().getEventos().enqueue(new Callback<List<EventoResponse>>() {
+            @Override
+            public void onResponse(Call<List<EventoResponse>> call, Response<List<EventoResponse>> response) {
+                mostrarCarga(false);
+
+                if(response.isSuccessful() && response.body() != null){
+                    listaEventos.clear();
+                    listaEventos.addAll(response.body());
+                    adapter.notifyDataSetChanged();
+
+                    if(listaEventos.isEmpty()){
+                        tvSinEventos.setVisibility(View.VISIBLE);
+                    } else {
+                        tvSinEventos.setVisibility(View.GONE);
+                    }
+                } else {
+                    if(getContext() != null) Toast.makeText(getContext(), "Error al cargar los eventos", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<EventoResponse>> call, Throwable t) {
+                mostrarCarga(false);
+                if(getContext()!=null) Toast.makeText(getContext(), "Error de conexión", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    // ------------------- NAVEGACIÓN ---------------------
+    @Override
+    public void onItemClick(EventoResponse evento){
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("evento_data", evento);
+        try {
+            Navigation.findNavController(requireView()).navigate(R.id.eventoDetailFragment, bundle);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override public void onEditarClick(EventoResponse evento) {}
+    @Override public void onEliminarClick(EventoResponse evento) {}
+
+    private void mostrarCarga(boolean show){
+        if (show) {
+            progressBar.setVisibility(View.VISIBLE);
+            rvEventos.setVisibility(View.GONE);
+        } else {
+            progressBar.setVisibility(View.GONE);
+            rvEventos.setVisibility(View.VISIBLE);
+        }
     }
 }

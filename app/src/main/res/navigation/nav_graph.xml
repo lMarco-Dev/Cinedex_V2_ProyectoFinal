@@ -46,5 +46,16 @@
             app:argType="com.example.cinedex_v2.Data.DTOs.Noticia.NoticiaResponse" />
     </fragment>
 
+    <fragment
+        android:id="@+id/eventoDetailFragment"
+        android:name="com.example.cinedex_v2.UI.UsersFragments.EventoDetailFragment"
+        android:label="Eventos"
+        tools:layout="@layout/fragment_evento_detail">
+
+        <argument
+            android:name="evento_data"
+            app:argType="com.example.cinedex_v2.Data.DTOs.Evento.EventoResponse" />
+    </fragment>
+
 
 </navigation>

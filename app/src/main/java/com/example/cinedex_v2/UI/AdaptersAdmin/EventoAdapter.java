@@ -24,16 +24,19 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.EventoView
     private List<EventoResponse> eventosList;
     private Context context;
     private OnEventoClickListener listener;
+    private boolean isEditable;
 
     //Interfaz para EventoFragment
     public interface OnEventoClickListener {
         void onEditarClick(EventoResponse evento);
         void onEliminarClick(EventoResponse evento);
+        void onItemClick(EventoResponse evento);
     }
 
-    public EventoAdapter(Context context, List<EventoResponse> eventosList, OnEventoClickListener listener){
+    public EventoAdapter(Context context, List<EventoResponse> eventosList, boolean isEditable,OnEventoClickListener listener){
         this.context = context;
         this.eventosList = eventosList;
+        this.isEditable = isEditable;
         this.listener = listener;
     }
 
@@ -78,8 +81,18 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.EventoView
                 .into(holder.ivEventoImagen);
 
         // 5. Asignar los listeners para los botones de Editar y Eliminar
-        holder.btnEditar.setOnClickListener(v -> listener.onEditarClick(evento));
-        holder.btnEliminar.setOnClickListener(v -> listener.onEliminarClick(evento));
+        if(isEditable) {
+            holder.btnEditar.setVisibility(View.VISIBLE);
+            holder.btnEliminar.setVisibility(View.VISIBLE);
+
+            holder.btnEditar.setOnClickListener(v -> listener.onEditarClick(evento));
+            holder.btnEliminar.setOnClickListener(v -> listener.onEliminarClick(evento));
+        } else {
+            holder.btnEditar.setVisibility(View.GONE);
+            holder.btnEliminar.setVisibility(View.GONE);
+
+            holder.itemView.setOnClickListener(v -> listener.onItemClick(evento));
+        }
     }
 
     @Override

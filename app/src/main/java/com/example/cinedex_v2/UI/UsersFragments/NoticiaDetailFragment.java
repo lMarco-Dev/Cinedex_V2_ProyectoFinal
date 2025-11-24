@@ -1,14 +1,15 @@
 package com.example.cinedex_v2.UI.UsersFragments;
 
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -60,7 +61,10 @@ public class NoticiaDetailFragment extends Fragment {
 
         // Referencias para el video
         CardView cardVideo = view.findViewById(R.id.card_video_container);
-        WebView webView = view.findViewById(R.id.webview_video);
+
+        // ESTO ES NUEVO: Necesitamos un ImageView dentro del CardView para mostrar la miniatura
+        // (Asegúrate de agregarlo al XML, ver abajo)
+        ImageView ivMiniaturaVideo = view.findViewById(R.id.iv_miniatura_video);
 
         tvTitulo.setText(noticia.getTitulo());
         tvContenido.setText(noticia.getResumen());
@@ -77,14 +81,36 @@ public class NoticiaDetailFragment extends Fragment {
                 .placeholder(R.drawable.ic_launcher_background)
                 .into(ivImagen);
 
-        // Lógica para incrustar video de YouTube
+        // --- LÓGICA DE VIDEO SEGURA (Abrir App externa) ---
         String videoUrl = noticia.getUrlYoutube();
+
         if (videoUrl != null && !videoUrl.isEmpty()) {
             String videoId = extractYoutubeId(videoUrl);
 
             if (videoId != null) {
                 cardVideo.setVisibility(View.VISIBLE);
-                setupWebView(webView, videoId);
+
+                // 1. Cargar la miniatura oficial de YouTube
+                String thumbnailUrl = "https://img.youtube.com/vi/" + videoId + "/hqdefault.jpg";
+
+                if (ivMiniaturaVideo != null) {
+                    Glide.with(this)
+                            .load(thumbnailUrl)
+                            .centerCrop()
+                            .into(ivMiniaturaVideo);
+                }
+
+                // 2. Al hacer clic, abrir la App de YouTube
+                cardVideo.setOnClickListener(v -> {
+                    Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + videoId));
+                    Intent webIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=" + videoId));
+                    try {
+                        startActivity(appIntent);
+                    } catch (ActivityNotFoundException ex) {
+                        startActivity(webIntent);
+                    }
+                });
+
             } else {
                 cardVideo.setVisibility(View.GONE);
             }
@@ -93,31 +119,11 @@ public class NoticiaDetailFragment extends Fragment {
         }
     }
 
-    private void setupWebView(WebView webView, String videoId) {
-        WebSettings settings = webView.getSettings();
-        settings.setJavaScriptEnabled(true);
-        settings.setDomStorageEnabled(true);
-
-        // Esto hace que el video se vea en pantalla completa dentro del cuadro
-        webView.setWebChromeClient(new WebChromeClient());
-
-        // URL especial para embeber videos
-        String embedUrl = "https://www.youtube.com/embed/" + videoId;
-
-        // HTML simple para cargar el iframe
-        String html = "<iframe width=\"100%\" height=\"100%\" src=\"" + embedUrl + "\" frameborder=\"0\" allowfullscreen></iframe>";
-
-        webView.loadData(html, "text/html", "utf-8");
-    }
-
-    // Método auxiliar para sacar el ID del video (ej: v=dQw4w9WgXcQ -> dQw4w9WgXcQ)
     private String extractYoutubeId(String url) {
         String pattern = "(?<=watch\\?v=|/videos/|embed\\/|youtu.be\\/|\\/v\\/|\\/e\\/|watch\\?v%3D|watch\\?feature=player_embedded&v=|%2Fvideos%2F|embed%\u200C\u200B2F|youtu.be%2F|%2Fv%2F)[^#\\&\\?\\n]*";
         Pattern compiledPattern = Pattern.compile(pattern);
         Matcher matcher = compiledPattern.matcher(url);
-        if (matcher.find()) {
-            return matcher.group();
-        }
+        if (matcher.find()) return matcher.group();
         return null;
     }
 }
