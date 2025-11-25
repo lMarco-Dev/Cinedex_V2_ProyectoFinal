@@ -57,5 +57,21 @@
             app:argType="com.example.cinedex_v2.Data.DTOs.Evento.EventoResponse" />
     </fragment>
 
+    <fragment
+        android:id="@+id/perfilFragment"
+        android:name="com.example.cinedex_v2.UI.UsersFragments.PerfilFragment"
+        android:label="Mi Perfil"
+        tools:layout="@layout/fragment_perfil" />
+
+    <fragment
+        android:id="@+id/reviewDetailFragment"
+        android:name="com.example.cinedex_v2.UI.UsersFragments.ReviewDetailFragment"
+        android:label="Comentarios"
+        tools:layout="@layout/fragment_review_detail">
+        <argument
+            android:name="resena_data"
+            app:argType="com.example.cinedex_v2.Data.DTOs.Resena.ResenaResponseDto" />
+    </fragment>
+
 
 </navigation>

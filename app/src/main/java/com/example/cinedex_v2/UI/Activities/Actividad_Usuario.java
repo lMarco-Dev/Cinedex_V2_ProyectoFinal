@@ -28,7 +28,7 @@ import com.example.cinedex_v2.Data.DTOs.Usuario.UsuarioUpdateRequestDto;
 import com.example.cinedex_v2.Data.Network.CineDexApiClient;
 import com.example.cinedex_v2.Data.Network.CineDexApiService;
 import com.example.cinedex_v2.R;
-import com.example.cinedex_v2.UI.AdaptersUser.ResenaAdapter;
+import com.example.cinedex_v2.UI.AdaptersUser.ProfileReviewAdapter;
 import com.google.android.material.appbar.MaterialToolbar;
 
 import java.util.List;
@@ -45,7 +45,7 @@ public class Actividad_Usuario extends AppCompatActivity {
     EditText etNombres, etApellidos, etCorreoEdit, etCambiarPass, etConfirmPass;
     Button btnEditarGuardar, btnCambiarPass, btnSeleccionarFoto;
     RecyclerView rvResenas;
-    ResenaAdapter resenaAdapter;
+    ProfileReviewAdapter resenaAdapter;
 
     // Toggles
     TextView tvToggleEditarDatos, tvToggleCambiarPassword;
@@ -199,7 +199,14 @@ public class Actividad_Usuario extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     List<ResenaResponseDto> lista = response.body();
 
-                    resenaAdapter = new ResenaAdapter(lista);
+                    resenaAdapter = new ProfileReviewAdapter(
+                            Actividad_Usuario.this,
+                            lista,
+                            resena -> {
+                                // Aquí decides qué hacer cuando toquen una reseña
+                                // Por ejemplo mostrar detalle
+                            }
+                    );
                     rvResenas.setLayoutManager(new LinearLayoutManager(Actividad_Usuario.this));
                     rvResenas.setAdapter(resenaAdapter);
                     rvResenas.setNestedScrollingEnabled(false);

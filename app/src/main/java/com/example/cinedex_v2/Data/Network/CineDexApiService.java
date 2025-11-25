@@ -2,6 +2,8 @@ package com.example.cinedex_v2.Data.Network;
 
 import com.example.cinedex_v2.Data.DTOs.Cine.CineRequest;
 import com.example.cinedex_v2.Data.DTOs.Cine.CineResponse;
+import com.example.cinedex_v2.Data.DTOs.Comentario.ComentarioRequest;
+import com.example.cinedex_v2.Data.DTOs.Comentario.ComentarioResponse;
 import com.example.cinedex_v2.Data.DTOs.Evento.EventoRequest;
 import com.example.cinedex_v2.Data.DTOs.Evento.EventoResponse;
 import com.example.cinedex_v2.Data.DTOs.Funcion.FuncionRequest;
@@ -167,4 +169,19 @@ public interface CineDexApiService {
     // CORREGIDO: Debe coincidir con [HttpGet("{idPlaylist}/peliculas")] del Backend
     @GET("api/Playlists/{idPlaylist}/peliculas")
     Call<List<PeliculaResponse>> getPeliculasDePlaylist(@Path("idPlaylist") int idPlaylist);
+
+    // ================== COMENTARIOS ==================
+
+    // Obtener comentarios de una reseña específica
+    // (Debe coincidir con tu backend: [HttpGet("por-resena/{idResena}")])
+    @GET("api/Comentarios/por-resena/{idResena}")
+    Call<List<ComentarioResponse>> getComentariosPorResena(@Path("idResena") int idResena);
+
+    // Crear un nuevo comentario
+    @POST("api/Comentarios")
+    Call<Void> crearComentario(@Body ComentarioRequest comentario);
+
+    // Opcional: Eliminar comentario (si el usuario es dueño o admin)
+    @DELETE("api/Comentarios/{id}")
+    Call<Void> eliminarComentario(@Path("id") int id);
 }

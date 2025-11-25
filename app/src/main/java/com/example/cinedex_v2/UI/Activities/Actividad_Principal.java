@@ -42,7 +42,7 @@ public class Actividad_Principal extends AppCompatActivity {
             int id = destination.getId();
 
             //Decidimos a que vistas la barra de navegación sera visible o no visible
-            if(id == R.id.homeFragment || id == R.id.eventosFragment || id == R.id.profileFragment) {
+            if(id == R.id.homeFragment || id == R.id.socialFragment || id == R.id.perfilFragment) {
                 bottomNavigationView.setVisibility(View.VISIBLE);
             } else {
                 bottomNavigationView.setVisibility(View.GONE);

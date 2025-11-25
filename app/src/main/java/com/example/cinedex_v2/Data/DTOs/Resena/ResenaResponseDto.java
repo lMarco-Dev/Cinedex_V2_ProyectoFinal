@@ -2,7 +2,9 @@ package com.example.cinedex_v2.Data.DTOs.Resena;
 
 import com.google.gson.annotations.SerializedName;
 
-public class ResenaResponseDto {
+import java.io.Serializable;
+
+public class ResenaResponseDto implements Serializable {
     @SerializedName("IdResena")
     private int idResena;
 

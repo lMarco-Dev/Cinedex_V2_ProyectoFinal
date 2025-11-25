@@ -11,7 +11,7 @@
         android:title="Social" />
 
     <item
-        android:id="@+id/profileFragment"
+        android:id="@+id/perfilFragment"
         android:icon="@drawable/ic_person"
         android:title="Perfil" />
 </menu>

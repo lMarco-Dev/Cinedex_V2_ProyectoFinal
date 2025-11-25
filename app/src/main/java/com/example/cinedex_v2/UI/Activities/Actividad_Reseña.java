@@ -10,7 +10,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RatingBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,7 +21,7 @@ import com.example.cinedex_v2.Data.DTOs.Resena.ResenaResponseDto;
 import com.example.cinedex_v2.Data.Network.CineDexApiClient;
 import com.example.cinedex_v2.Data.Network.CineDexApiService;
 import com.example.cinedex_v2.R;
-import com.example.cinedex_v2.UI.AdaptersUser.ResenaAdapter;
+import com.example.cinedex_v2.UI.AdaptersUser.ProfileReviewAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -38,7 +37,7 @@ public class Actividad_Reseña extends AppCompatActivity {
     private FloatingActionButton fabNuevaResena;
 
     private CineDexApiService apiService;
-    private ResenaAdapter adapter;
+    private ProfileReviewAdapter adapter;
     private List<ResenaResponseDto> resenas = new ArrayList<>();
 
     // ID de la película actual (Harcodeado para probar, luego lo recibes por Intent)
@@ -56,7 +55,13 @@ public class Actividad_Reseña extends AppCompatActivity {
         apiService = CineDexApiClient.getApiService();
 
         // Configurar lista
-        adapter = new ResenaAdapter(resenas);
+        adapter = new ProfileReviewAdapter(
+                this,
+                resenas,
+                resena -> {
+
+                }
+        );
         rvResenas.setLayoutManager(new LinearLayoutManager(this));
         rvResenas.setAdapter(adapter);
 
