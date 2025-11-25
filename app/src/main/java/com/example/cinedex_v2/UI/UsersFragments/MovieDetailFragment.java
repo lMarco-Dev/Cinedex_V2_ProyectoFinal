@@ -41,6 +41,7 @@ public class MovieDetailFragment extends Fragment {
 
     private int movieId;
     private CineDexApiService apiService;
+    private PeliculaResponse peliculaActual;
 
     // Vistas
     private ImageView detailBackdrop, detailPoster;
@@ -49,8 +50,6 @@ public class MovieDetailFragment extends Fragment {
     private Button detailReviewButton;
     private Toolbar toolbar;
     private TextView detailTextRating, detailTextRuntime, detailTextYear;
-
-    private PeliculaResponse peliculaActual;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,8 +61,7 @@ public class MovieDetailFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.ly_fragment_movie_detail, container, false);
     }
 
@@ -78,14 +76,15 @@ public class MovieDetailFragment extends Fragment {
         detailTitle = view.findViewById(R.id.detail_title);
         detailRating = view.findViewById(R.id.detail_rating);
         detailDescription = view.findViewById(R.id.detail_description);
-        detailReviewButton = view.findViewById(R.id.detail_review_button);
+        detailReviewButton = view.findViewById(R.id.detail_review_button); // Este es el botón "Realizar Reseña"
         detailTextRating = view.findViewById(R.id.detail_text_rating);
         detailTextYear = view.findViewById(R.id.detail_text_year);
         detailTextRuntime = view.findViewById(R.id.detail_text_runtime);
 
         setupToolbar();
 
-        // Click en "Escribir Reseña" -> Abre el diálogo
+        // --- AQUÍ ESTÁ LA CLAVE ---
+        // Al hacer clic, abrimos el diálogo directamente.
         detailReviewButton.setOnClickListener(v -> mostrarDialogoResena());
 
         cargarDetallePelicula();
@@ -123,39 +122,28 @@ public class MovieDetailFragment extends Fragment {
 
     private void updateUI(PeliculaResponse pelicula) {
         this.peliculaActual = pelicula;
-
         detailTitle.setText(pelicula.getTitulo());
         detailDescription.setText(pelicula.getDescripcion());
         detailRating.setRating((float) pelicula.getNotaPromedio());
         detailTextRating.setText(String.format(Locale.US, "%.1f", pelicula.getNotaPromedio()));
-
-        // Si tu API tuviera año, lo pondrías aquí. Si no, N/A.
         detailTextYear.setText("N/A");
-
         detailTextRuntime.setText(pelicula.getDuracionMin() != null ? pelicula.getDuracionMin() + " min" : "N/A");
 
         if (getContext() != null) {
-            Glide.with(getContext())
-                    .load(pelicula.getUrlPoster())
-                    .placeholder(R.drawable.bg_poster_placeholder) // Asegúrate de tener esta imagen o usa ic_launcher_background
-                    .into(detailPoster);
-
-            Glide.with(getContext())
-                    .load(pelicula.getUrlPoster())
-                    .placeholder(R.drawable.bg_poster_placeholder)
-                    .into(detailBackdrop);
+            Glide.with(getContext()).load(pelicula.getUrlPoster()).into(detailPoster);
+            Glide.with(getContext()).load(pelicula.getUrlPoster()).into(detailBackdrop);
         }
     }
 
     // =================================================================
-    //  MÉTODO PARA ABRIR EL DIÁLOGO DE RESEÑA (Integrado aquí)
+    //  MÉTODO: MOSTRAR DIÁLOGO DE RESEÑA
     // =================================================================
     private void mostrarDialogoResena() {
         if (getContext() == null) return;
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
-        // Inflamos TU diseño XML (dialog_nueva_resena.xml)
+        // Inflamos el XML que creamos en el Paso 2
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_nueva_resena, null);
         builder.setView(dialogView);
@@ -165,13 +153,12 @@ public class MovieDetailFragment extends Fragment {
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }
 
-        // Vincular vistas del diálogo
+        // Vincular vistas del XML
         RatingBar ratingBar = dialogView.findViewById(R.id.dialog_rating_bar);
         EditText etComentario = dialogView.findViewById(R.id.dialog_edit_text);
         Button btnCancelar = dialogView.findViewById(R.id.dialog_button_cancelar);
         Button btnGuardar = dialogView.findViewById(R.id.dialog_button_guardar);
 
-        // Acciones
         btnCancelar.setOnClickListener(v -> dialog.dismiss());
 
         btnGuardar.setOnClickListener(v -> {
@@ -179,7 +166,7 @@ public class MovieDetailFragment extends Fragment {
             String comentario = etComentario.getText().toString().trim();
 
             if (puntaje == 0) {
-                Toast.makeText(getContext(), "Por favor, califica la película", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Debes calificar con estrellas", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -189,9 +176,13 @@ public class MovieDetailFragment extends Fragment {
         dialog.show();
     }
 
+    // =================================================================
+    //  MÉTODO: ENVIAR A LA API
+    // =================================================================
     private void enviarResenaApi(float puntaje, String comentario, AlertDialog dialog) {
         if (getActivity() == null) return;
 
+        // Obtenemos el usuario logueado
         SharedPreferences prefs = getActivity().getSharedPreferences("sesion_usuario", Context.MODE_PRIVATE);
         int idUsuario = prefs.getInt("ID_USUARIO", -1);
 
@@ -211,13 +202,13 @@ public class MovieDetailFragment extends Fragment {
             @Override
             public void onResponse(Call<ResenaResponseDto> call, Response<ResenaResponseDto> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(getContext(), "¡Reseña guardada!", Toast.LENGTH_SHORT).show();
-                    dialog.dismiss();
+                    Toast.makeText(getContext(), "¡Gracias por tu opinión!", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss(); // Cerramos el diálogo
 
-                    // Opcional: Recargar los datos de la película para actualizar el promedio
+                    // Opcional: Recargar la película para ver si cambió el promedio
                     cargarDetallePelicula();
                 } else {
-                    Toast.makeText(getContext(), "Error al guardar", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Error al guardar: " + response.code(), Toast.LENGTH_SHORT).show();
                 }
             }
 

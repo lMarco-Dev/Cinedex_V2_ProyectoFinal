@@ -1,35 +1,36 @@
 package com.example.cinedex_v2.Data.DTOs.Resena;
 
 import com.google.gson.annotations.SerializedName;
-
 import java.io.Serializable;
 
 public class ResenaResponseDto implements Serializable {
-    @SerializedName("IdResena")
+
+    @SerializedName("idResena") // <--- Minúscula
     private int idResena;
 
-    @SerializedName("IdUsuario")
+    @SerializedName("idUsuario") // <--- Minúscula
     private int idUsuario;
 
-    @SerializedName("IdPelicula")
+    @SerializedName("idPelicula") // <--- Minúscula
     private int idPelicula;
 
-    @SerializedName("Comentario")
+    @SerializedName("comentario") // <--- Minúscula
     private String comentario;
 
-    @SerializedName("Puntuacion")
+    @SerializedName("puntuacion") // <--- Minúscula
     private double puntuacion;
 
-    @SerializedName("Fecha")
-    private String fecha; // DateTime en C# → String en Android, luego puedes parsear si quieres
+    @SerializedName("fecha") // <--- Minúscula
+    private String fecha;
 
-    @SerializedName("Titulo")
+    @SerializedName("titulo") // <--- Minúscula (Esto era Titulo)
     private String tituloPelicula;
 
-    @SerializedName("PosterPeliculaURL")
+    // ESTE ERA EL CULPABLE PRINCIPAL:
+    @SerializedName("posterPeliculaURL") // <--- ¡MINÚSCULA "p"!
     private String posterPeliculaURL;
 
-    // Getters y setters
+    // --- GETTERS Y SETTERS (Estos pueden quedarse igual) ---
     public int getIdResena() { return idResena; }
     public void setIdResena(int idResena) { this.idResena = idResena; }
 

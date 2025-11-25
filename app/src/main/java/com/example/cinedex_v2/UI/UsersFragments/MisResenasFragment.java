@@ -10,12 +10,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager; // <--- IMPORTANTE: Grid
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.cinedex_v2.Data.DTOs.Resena.ResenaResponseDto;
 import com.example.cinedex_v2.Data.Network.CineDexApiClient;
 import com.example.cinedex_v2.R;
 import com.example.cinedex_v2.UI.AdaptersUser.ProfileReviewAdapter;
+
 import java.util.ArrayList;
 import java.util.List;
 import retrofit2.Call;
@@ -38,16 +40,25 @@ public class MisResenasFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         rvResenas = view.findViewById(R.id.rv_mis_resenas);
+
+        // 1. USAMOS GRIDLAYOUTMANAGER (3 Columnas como Instagram)
         rvResenas.setLayoutManager(new GridLayoutManager(getContext(), 3));
 
+        // 2. Configurar Adapter con el evento de Click
         adapter = new ProfileReviewAdapter(getContext(), misResenas, resena -> {
+
+            // --- LÓGICA DEL CLIC ---
+            // Empaquetamos la reseña completa
             Bundle bundle = new Bundle();
             bundle.putSerializable("resena_data", resena);
+
+            // Navegamos a la pantalla de DETALLE (ReviewDetailFragment)
             try {
                 Navigation.findNavController(requireActivity(), R.id.nav_host_fragment)
                         .navigate(R.id.reviewDetailFragment, bundle);
             } catch (Exception e) { e.printStackTrace(); }
         });
+
         rvResenas.setAdapter(adapter);
 
         cargarDatos();
@@ -58,20 +69,18 @@ public class MisResenasFragment extends Fragment {
         int idUsuario = prefs.getInt("ID_USUARIO", -1);
 
         if(idUsuario != -1) {
-            CineDexApiClient.getApiService().getResenasPorUsuario(idUsuario)
-                    .enqueue(new Callback<List<ResenaResponseDto>>() {
-                        @Override
-                        public void onResponse(Call<List<ResenaResponseDto>> call, Response<List<ResenaResponseDto>> response) {
-                            if(response.isSuccessful() && response.body() != null) {
-                                misResenas.clear();
-                                misResenas.addAll(response.body());
-                                adapter.notifyDataSetChanged();
-                            }
-                        }
-                        @Override
-                        public void onFailure(Call<List<ResenaResponseDto>> call, Throwable t) {}
-                    });
+            CineDexApiClient.getApiService().getResenasPorUsuario(idUsuario).enqueue(new Callback<List<ResenaResponseDto>>() {
+                @Override
+                public void onResponse(Call<List<ResenaResponseDto>> call, Response<List<ResenaResponseDto>> response) {
+                    if(response.isSuccessful() && response.body() != null) {
+                        misResenas.clear();
+                        misResenas.addAll(response.body());
+                        adapter.notifyDataSetChanged();
+                    }
+                }
+                @Override
+                public void onFailure(Call<List<ResenaResponseDto>> call, Throwable t) {}
+            });
         }
     }
-
 }
