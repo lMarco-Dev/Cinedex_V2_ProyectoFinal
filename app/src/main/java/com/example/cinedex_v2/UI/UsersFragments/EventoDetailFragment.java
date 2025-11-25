@@ -1,17 +1,16 @@
 package com.example.cinedex_v2.UI.UsersFragments;
 
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import com.bumptech.glide.Glide;
 import com.example.cinedex_v2.Data.DTOs.Evento.EventoResponse;
@@ -26,7 +25,7 @@ public class EventoDetailFragment extends Fragment {
     private EventoResponse evento;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             evento = (EventoResponse) getArguments().getSerializable("evento_data");
@@ -34,9 +33,7 @@ public class EventoDetailFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_evento_detail, container, false);
     }
 
@@ -44,20 +41,20 @@ public class EventoDetailFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // 1. Configurar Toolbar
+        // Configurar Toolbar
         MaterialToolbar toolbar = view.findViewById(R.id.toolbar_evento);
         toolbar.setNavigationOnClickListener(v -> Navigation.findNavController(view).popBackStack());
 
         if (evento == null) return;
 
-        // 2. Vincular Vistas
+        // Vincular Vistas
         ImageView ivImagen = view.findViewById(R.id.iv_evento_imagen_grande);
         TextView tvTitulo = view.findViewById(R.id.tv_evento_titulo_grande);
         TextView tvFecha = view.findViewById(R.id.tv_evento_fecha_grande);
         TextView tvUbicacion = view.findViewById(R.id.tv_evento_ubicacion_grande);
         TextView tvDescripcion = view.findViewById(R.id.tv_evento_descripcion_grande);
 
-        // 3. Llenar Datos
+        // Llenar Datos
         tvTitulo.setText(evento.getTitulo());
         tvUbicacion.setText(evento.getUbicacion());
         tvDescripcion.setText(evento.getDescripcion());
@@ -69,7 +66,7 @@ public class EventoDetailFragment extends Fragment {
             tvFecha.setText("Fecha por confirmar");
         }
 
-        // 4. Cargar Imagen
+        // Cargar Imagen
         Glide.with(this)
                 .load(evento.getUrlImagen())
                 .placeholder(R.drawable.ic_launcher_background)

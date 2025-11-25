@@ -4,36 +4,44 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#121212">
+    android:background="@color/gray_dark">
 
-    <Toolbar
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/emerald_green"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Novedades"
-        android:textColor="@color/gold_light"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:padding="16dp"
-        android:background="#1F1F1F"/>
+        android:background="@color/emerald_green"
+        android:orientation="vertical"
+        android:paddingTop="16dp"
+        android:paddingBottom="8dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Novedades"
+            android:textColor="@color/white"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:layout_gravity="center_horizontal"
+            android:letterSpacing="0.05"/>
+    </LinearLayout>
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_layout_social"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#1F1F1F"
-        app:tabTextColor="#B0B0B0"
-        app:tabSelectedTextColor="@color/emerald_green"
-        app:tabIndicatorColor="@color/emerald_green"
+        android:background="@color/gray_dark"
+        app:tabTextColor="@color/text_gray"
+        app:tabSelectedTextColor="@color/kick_green"
+        app:tabIndicatorColor="@color/kick_green"
+        app:tabIndicatorHeight="3dp"
         app:tabMode="fixed"
-        app:tabGravity="fill"/>
+        app:tabGravity="fill"
+        app:tabRippleColor="@color/emerald_green"/>
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/view_pager_social"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:background="@color/gray_dark"/>
 
 </LinearLayout>

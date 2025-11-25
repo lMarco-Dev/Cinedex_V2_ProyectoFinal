@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -40,8 +39,7 @@ public class NoticiaDetailFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_noticia_detail, container, false);
     }
 
@@ -49,58 +47,44 @@ public class NoticiaDetailFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // Configurar Toolbar
         MaterialToolbar toolbar = view.findViewById(R.id.toolbar_noticia);
         toolbar.setNavigationOnClickListener(v -> Navigation.findNavController(view).popBackStack());
 
-        if(noticia == null) return;
+        if (noticia == null) return;
 
+        // Vincular Vistas
         ImageView ivImagen = view.findViewById(R.id.iv_detalle_imagen);
         TextView tvTitulo = view.findViewById(R.id.tv_detalle_titulo);
         TextView tvFecha = view.findViewById(R.id.tv_detalle_fecha);
         TextView tvContenido = view.findViewById(R.id.tv_detalle_contenido);
-
-        // Referencias para el video
         CardView cardVideo = view.findViewById(R.id.card_video_container);
+        ImageView ivMiniatura = view.findViewById(R.id.iv_miniatura_video);
 
-        // ESTO ES NUEVO: Necesitamos un ImageView dentro del CardView para mostrar la miniatura
-        // (Asegúrate de agregarlo al XML, ver abajo)
-        ImageView ivMiniaturaVideo = view.findViewById(R.id.iv_miniatura_video);
-
+        // Llenar Datos
         tvTitulo.setText(noticia.getTitulo());
         tvContenido.setText(noticia.getResumen());
 
         if (noticia.getFechaPublicacion() != null) {
             SimpleDateFormat sdf = new SimpleDateFormat("dd 'de' MMMM, yyyy", new Locale("es", "ES"));
             tvFecha.setText(sdf.format(noticia.getFechaPublicacion()));
-        } else {
-            tvFecha.setText("");
         }
 
-        Glide.with(this)
-                .load(noticia.getUrlImagen())
-                .placeholder(R.drawable.ic_launcher_background)
-                .into(ivImagen);
+        Glide.with(this).load(noticia.getUrlImagen()).into(ivImagen);
 
-        // --- LÓGICA DE VIDEO SEGURA (Abrir App externa) ---
+        // Lógica de Video
         String videoUrl = noticia.getUrlYoutube();
-
         if (videoUrl != null && !videoUrl.isEmpty()) {
             String videoId = extractYoutubeId(videoUrl);
 
             if (videoId != null) {
                 cardVideo.setVisibility(View.VISIBLE);
 
-                // 1. Cargar la miniatura oficial de YouTube
-                String thumbnailUrl = "https://img.youtube.com/vi/" + videoId + "/hqdefault.jpg";
+                // Cargar miniatura HQ
+                String thumbUrl = "https://img.youtube.com/vi/" + videoId + "/hqdefault.jpg";
+                Glide.with(this).load(thumbUrl).centerCrop().into(ivMiniatura);
 
-                if (ivMiniaturaVideo != null) {
-                    Glide.with(this)
-                            .load(thumbnailUrl)
-                            .centerCrop()
-                            .into(ivMiniaturaVideo);
-                }
-
-                // 2. Al hacer clic, abrir la App de YouTube
+                // Click para abrir App externa
                 cardVideo.setOnClickListener(v -> {
                     Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + videoId));
                     Intent webIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=" + videoId));
@@ -110,7 +94,6 @@ public class NoticiaDetailFragment extends Fragment {
                         startActivity(webIntent);
                     }
                 });
-
             } else {
                 cardVideo.setVisibility(View.GONE);
             }
@@ -121,9 +104,7 @@ public class NoticiaDetailFragment extends Fragment {
 
     private String extractYoutubeId(String url) {
         String pattern = "(?<=watch\\?v=|/videos/|embed\\/|youtu.be\\/|\\/v\\/|\\/e\\/|watch\\?v%3D|watch\\?feature=player_embedded&v=|%2Fvideos%2F|embed%\u200C\u200B2F|youtu.be%2F|%2Fv%2F)[^#\\&\\?\\n]*";
-        Pattern compiledPattern = Pattern.compile(pattern);
-        Matcher matcher = compiledPattern.matcher(url);
-        if (matcher.find()) return matcher.group();
-        return null;
+        Matcher matcher = Pattern.compile(pattern).matcher(url);
+        return matcher.find() ? matcher.group() : null;
     }
 }
