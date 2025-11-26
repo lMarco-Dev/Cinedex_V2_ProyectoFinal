@@ -11,6 +11,11 @@
         android:title="Social" />
 
     <item
+        android:id="@+id/juegoFragment"
+        android:icon="@drawable/ic_game"
+        android:title="Reto"/>
+
+    <item
         android:id="@+id/cinesUserFragment"
         android:icon="@drawable/movie_24"
         android:title="Carteleras"/>

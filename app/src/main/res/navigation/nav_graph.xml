@@ -52,6 +52,12 @@
     </fragment>
 
     <fragment
+        android:id="@+id/juegoFragment"
+        android:name="com.example.cinedex_v2.UI.UsersFragments.JuegoFragment"
+        android:label="Reto CineDex"
+        tools:layout="@layout/fragment_juego"/>
+
+    <fragment
         android:id="@+id/cinesUserFragment"
         android:name="com.example.cinedex_v2.UI.UsersFragments.CinesUserFragment"
         android:label="Carteleras"
