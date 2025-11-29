@@ -6,12 +6,35 @@
     android:layout_height="match_parent"
     android:background="#1C1C1C">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_playlists"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        android:padding="8dp"/>
+        android:orientation="vertical">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/emerald_green">
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbar_playlists"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:title="Gestión de Playlists"
+                app:titleTextColor="@color/gold_light"
+                app:navigationIcon="@drawable/ic_arrow_back"
+                app:navigationIconTint="@color/gold_light" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_playlists"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:padding="8dp"/>
+    </LinearLayout>
 
     <ProgressBar
         android:id="@+id/progress_bar_playlists"
@@ -27,6 +50,7 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:src="@drawable/ic_add"
-        app:tint="@android:color/white"/>
+        app:tint="@android:color/white"
+        app:backgroundTint="@color/gold_light"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

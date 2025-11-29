@@ -7,12 +7,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView; // Importante para el título
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
+import androidx.navigation.Navigation; // Importante para navegar
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,6 +26,7 @@ import com.example.cinedex_v2.Data.DTOs.Playlist.PlaylistOrdenDto;
 import com.example.cinedex_v2.R;
 import com.example.cinedex_v2.UI.AdaptersAdmin.PlaylistAdminAdapter;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.appbar.MaterialToolbar; // Importante
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +35,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+// CAMBIO DE NOMBRE: PlaylistsFragment (plural)
 public class PlaylistFragment extends Fragment
         implements PlaylistAdminAdapter.OnPlaylistClickListener, GuardarPlaylistDialog.OnPlaylistGuardadaListener {
 
@@ -50,6 +53,14 @@ public class PlaylistFragment extends Fragment
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        // Configurar Toolbar (Flecha atrás) si existe en el XML
+        MaterialToolbar toolbar = view.findViewById(R.id.toolbar_playlists);
+        if (toolbar != null) {
+            toolbar.setNavigationOnClickListener(v -> {
+                Navigation.findNavController(view).popBackStack();
+            });
+        }
 
         rvPlaylists = view.findViewById(R.id.rv_playlists);
         progressBar = view.findViewById(R.id.progress_bar_playlists);
@@ -70,6 +81,7 @@ public class PlaylistFragment extends Fragment
         cargarPlaylists();
     }
 
+    // ... (resto de métodos: setupDragAndDrop, guardarOrdenEnApi, cargarPlaylists igual que antes) ...
     private void setupDragAndDrop() {
         ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(
                 ItemTouchHelper.UP | ItemTouchHelper.DOWN, 0) {
@@ -80,14 +92,12 @@ public class PlaylistFragment extends Fragment
                 adapter.moverItem(from, to);
                 return true;
             }
-
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {}
-
             @Override
             public void clearView(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
                 super.clearView(recyclerView, viewHolder);
-                guardarOrdenEnApi(); // Guardar al soltar
+                guardarOrdenEnApi();
             }
         };
         new ItemTouchHelper(simpleCallback).attachToRecyclerView(rvPlaylists);
@@ -96,11 +106,9 @@ public class PlaylistFragment extends Fragment
     private void guardarOrdenEnApi() {
         List<PlaylistResponse> nuevaLista = adapter.getLista();
         List<PlaylistOrdenDto> ordenDto = new ArrayList<>();
-
         for (int i = 0; i < nuevaLista.size(); i++) {
             ordenDto.add(new PlaylistOrdenDto(nuevaLista.get(i).getIdPlaylist(), i + 1));
         }
-
         apiService.reordenarPlaylists(ordenDto).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
@@ -134,11 +142,9 @@ public class PlaylistFragment extends Fragment
     public void onPlaylistGuardada(String nombre, Integer idToUpdate) {
         SharedPreferences prefs = getActivity().getSharedPreferences("sesion_usuario", Context.MODE_PRIVATE);
         int idUsuario = prefs.getInt("ID_USUARIO", 1);
-
         PlaylistRequest request = new PlaylistRequest(idUsuario, nombre);
 
         if(idToUpdate == null) {
-            // Asumiendo que crear devuelve PlaylistResponse en la API pero lo manejamos genérico o casteamos
             apiService.crearPlaylist(request).enqueue(new Callback<PlaylistResponse>() {
                 @Override
                 public void onResponse(Call<PlaylistResponse> call, Response<PlaylistResponse> response) {
@@ -183,6 +189,7 @@ public class PlaylistFragment extends Fragment
                 }).show();
     }
 
+    // ESTE ES EL MÉTODO QUE NECESITAS PARA QUE AL TOCAR LA TARJETA VAYA AL DETALLE
     @Override
     public void onItemClick(PlaylistResponse playlist) {
         Bundle bundle = new Bundle();
@@ -190,7 +197,7 @@ public class PlaylistFragment extends Fragment
         bundle.putString("nombre_playlist", playlist.getNombre());
 
         try {
-            // Asegúrate de agregar este destino en tu nav_graph_admin.xml
+            // Navegamos al fragmento de detalle (donde agregas las películas)
             Navigation.findNavController(requireView())
                     .navigate(R.id.playlistDetailFragment, bundle);
         } catch (Exception e) {

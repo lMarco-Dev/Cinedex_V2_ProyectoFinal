@@ -27,8 +27,8 @@
         android:title="Funciones" />
 
     <item
-        android:id="@+id/perfilAdminFragment"
-        android:icon="@drawable/admin_26"
-        android:title="Admin" />
+        android:id="@+id/action_logout"
+        android:icon="@drawable/ic_exit"
+        android:title="Salir" />
 
 </menu>

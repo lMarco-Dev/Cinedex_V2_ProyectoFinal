@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.cinedex_v2.Data.Network.CineDexApiClient;
@@ -19,6 +20,7 @@ import com.example.cinedex_v2.Data.DTOs.Funcion.FuncionRequest;
 import com.example.cinedex_v2.Data.DTOs.Funcion.FuncionResponse;
 import com.example.cinedex_v2.R;
 import com.example.cinedex_v2.UI.AdaptersAdmin.FuncionAdapter;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -61,6 +63,18 @@ public class FuncionesFragment extends Fragment
         if (getArguments() != null) {
             idCineSeleccionado = getArguments().getInt("id_cine");
             nombreCineSeleccionado = getArguments().getString("nombre_cine");
+        }
+
+        // --- CONFIGURAR TOOLBAR LOCAL ---
+        MaterialToolbar toolbar = view.findViewById(R.id.toolbar_funciones_admin);
+        if (toolbar != null) {
+            // Ponemos el título: "Cartelera: Cineplanet"
+            toolbar.setTitle("Cartelera: " + nombreCineSeleccionado);
+
+            // Acción de la flecha atrás
+            toolbar.setNavigationOnClickListener(v -> {
+                Navigation.findNavController(view).popBackStack();
+            });
         }
 
         // 2. Configurar Título del Header (Panel Admin)
