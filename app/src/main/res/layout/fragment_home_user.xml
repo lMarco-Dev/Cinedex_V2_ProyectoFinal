@@ -14,33 +14,52 @@
         android:orientation="vertical"
         android:paddingBottom="80dp">
 
+        <View
+            android:id="@+id/top_bar_decorativa"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@color/emerald_green" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/emerald_green"
-            android:padding="16dp"
+            android:orientation="horizontal"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="16dp"
             android:gravity="center_vertical"
-            android:layout_marginBottom="16dp">
+            android:background="#121212">
+
             <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:src="@drawable/logo_chatgpt"
-                app:tint="@color/white"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:text="CINEDEX"
-                android:textColor="@color/white"
-                android:textSize="20sp"
-                android:textStyle="bold"/>
-        </LinearLayout>
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_movie"
+                app:tint="@color/emerald_green"/> <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="12dp"
+            android:text="CINEDEX"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.05"/>
+
+            <ImageView
+                android:id="@+id/btn_search"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_search_white"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                app:tint="@color/gold_light"/> </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_home_principal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false"/>
+            android:nestedScrollingEnabled="false"
+            android:layout_marginTop="8dp"/>
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

@@ -184,4 +184,11 @@ public interface CineDexApiService {
     // Opcional: Eliminar comentario (si el usuario es dueño o admin)
     @DELETE("api/Comentarios/{id}")
     Call<Void> eliminarComentario(@Path("id") int id);
+
+    // ================== BUSQUEDA ==================
+    @GET("api/Peliculas/buscar/{texto}")
+    Call<List<PeliculaResponse>> buscarPeliculas(@Path("texto") String texto);
+
+    @GET("api/Usuarios/buscar/{texto}")
+    Call<List<UsuarioResponseDto>> buscarUsuarios(@Path("texto") String texto);
 }

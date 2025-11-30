@@ -49,6 +49,14 @@ public class HomeUserFragment extends Fragment implements MovieAdapter.OnMovieCl
         parentAdapter = new HomePlaylistAdapter(getContext(), listaPlaylists, this);
         rvMain.setAdapter(parentAdapter);
 
+        view.findViewById(R.id.btn_search).setOnClickListener(v -> {
+            try {
+                Navigation.findNavController(view).navigate(R.id.searchFragment);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
         cargarHomeDinamico();
     }
 
