@@ -26,6 +26,14 @@
     </fragment>
 
     <fragment
+        android:id="@+id/userProfileFragment"
+        android:name="com.example.cinedex_v2.UI.UsersFragments.UserProfileFragment"
+        android:label="Perfil Usuario"
+        tools:layout="@layout/fragment_user_profile">
+        <argument android:name="userId" app:argType="integer" />
+    </fragment>
+
+    <fragment
         android:id="@+id/socialFragment"
         android:name="com.example.cinedex_v2.UI.UsersFragments.SocialFragment"
         android:label="Novedades"
@@ -80,7 +88,8 @@
         android:id="@+id/perfilFragment"
         android:name="com.example.cinedex_v2.UI.UsersFragments.PerfilFragment"
         android:label="Mi Perfil"
-        tools:layout="@layout/fragment_perfil" />
+        tools:layout="@layout/fragment_perfil">
+    </fragment>
 
     <fragment
         android:id="@+id/reviewDetailFragment"

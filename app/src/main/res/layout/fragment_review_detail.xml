@@ -1,17 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#121212">
+    android:background="#121212"
+    android:fitsSystemWindows="true">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/emerald_green"
-        app:layout_constraintTop_toTopOf="parent">
+        android:background="@color/gray_dark"
+        android:elevation="4dp">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@color/emerald_green"/>
+
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar_review"
             android:layout_width="match_parent"
@@ -19,71 +26,91 @@
             app:navigationIcon="@drawable/ic_arrow_back"
             app:navigationIconTint="@color/white"
             app:title="Comentarios"
-            app:titleTextColor="@color/white"/>
+            app:titleTextColor="@color/white"
+            app:titleCentered="false"
+            android:background="@color/gray_dark"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#333"/>
+
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/app_bar"
-        app:layout_constraintBottom_toTopOf="@id/layout_input">
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingBottom="80dp"> <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            app:cardBackgroundColor="@color/gray_medium"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="16dp">
-
-                <ImageView
-                    android:id="@+id/iv_review_poster"
-                    android:layout_width="80dp"
-                    android:layout_height="120dp"
-                    android:scaleType="centerCrop"
-                    android:background="#333"/>
+                android:orientation="vertical"
+                android:padding="16dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginStart="12dp">
+                    android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/tv_review_pelicula"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Nombre Película"
-                        android:textColor="@color/white"
-                        android:textStyle="bold"
-                        android:textSize="18sp"/>
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/iv_review_poster"
+                        android:layout_width="70dp"
+                        android:layout_height="100dp"
+                        android:scaleType="centerCrop"
+                        app:shapeAppearanceOverlay="@style/ShapeAppearance.MaterialComponents.MediumComponent"
+                        android:background="#333"/>
 
-                    <RatingBar
-                        android:id="@+id/rb_review_nota"
-                        style="?android:attr/ratingBarStyleSmall"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:progressTint="@color/gold"/>
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="16dp">
 
-                    <TextView
-                        android:id="@+id/tv_review_texto"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Aquí va la opinión del usuario..."
-                        android:textColor="#BDBDBD"
-                        android:layout_marginTop="8dp"/>
+                        <TextView
+                            android:id="@+id/tv_review_pelicula"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Nombre Película"
+                            android:textColor="@color/white"
+                            android:textStyle="bold"
+                            android:textSize="18sp"/>
+
+                        <RatingBar
+                            android:id="@+id/rb_review_nota"
+                            style="?android:attr/ratingBarStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:progressTint="@color/gold"
+                            android:layout_marginTop="4dp"/>
+                    </LinearLayout>
                 </LinearLayout>
-            </LinearLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#333"
-                android:layout_marginBottom="16dp"/>
+                <TextView
+                    android:id="@+id/tv_review_texto"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Aquí va la opinión del usuario..."
+                    android:textColor="#E0E0E0"
+                    android:textSize="16sp"
+                    android:lineSpacingExtra="4dp"
+                    android:layout_marginTop="12dp"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -91,13 +118,16 @@
                 android:text="Comentarios"
                 android:textColor="@color/emerald_green"
                 android:textStyle="bold"
+                android:textSize="18sp"
+                android:layout_marginStart="24dp"
                 android:layout_marginBottom="8dp"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_comentarios"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false"/>
+                android:nestedScrollingEnabled="false"
+                android:paddingHorizontal="16dp"/>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
@@ -107,9 +137,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="8dp"
-        android:background="#1F1F1F"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:padding="12dp"
+        android:background="#252525"
+        android:gravity="center_vertical"
+        android:elevation="16dp"
+        android:layout_gravity="bottom">
 
         <EditText
             android:id="@+id/et_nuevo_comentario"
@@ -119,17 +151,20 @@
             android:hint="Escribe un comentario..."
             android:textColor="@color/white"
             android:textColorHint="#808080"
-            android:background="@null"
-            android:padding="12dp"/>
+            android:background="@drawable/bg_boton_redondo_oscuro"
+            android:padding="12dp"
+            android:maxLines="3"
+            android:inputType="textCapSentences"/>
 
         <ImageButton
             android:id="@+id/btn_enviar_comentario"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:src="@drawable/ic_playlist_play"
-            android:rotation="180"
+            android:rotation="0"
             app:tint="@color/emerald_green"
-            android:background="?attr/selectableItemBackgroundBorderless"/>
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Enviar"/>
     </LinearLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

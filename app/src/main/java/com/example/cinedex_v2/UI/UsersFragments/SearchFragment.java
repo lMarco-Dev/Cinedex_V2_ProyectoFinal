@@ -127,6 +127,18 @@ public class SearchFragment extends Fragment {
 
                     userAdapter = new UserSearchAdapter(getContext(), listaUsuarios, usuario -> {
                         // Acción al clic en usuario
+
+                        // 1. Preparamos el ID del Usuario seleccionado
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("userId", usuario.getIdUsuario());
+
+                        // 2. Navegamos al Perfil público
+                        try {
+                            Navigation.findNavController(requireView())
+                                    .navigate(R.id.userProfileFragment, bundle);
+                        }catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     });
                     rvResults.setAdapter(userAdapter);
                 }
