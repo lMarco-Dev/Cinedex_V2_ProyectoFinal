@@ -1,24 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#101010">
+    android:background="#121212">
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar_settings"
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/emerald_green"
-        app:navigationIcon="@drawable/ic_arrow_back"
-        app:navigationIconTint="@color/white"
-        app:title="Configuración"
-        app:titleTextColor="@color/white" />
+        android:layout_height="wrap_content"
+        android:background="#121212"
+        android:paddingTop="30dp"
+        android:elevation="0dp">
 
-    <ScrollView
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar_settings"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:navigationIcon="@drawable/ic_arrow_back"
+            app:navigationIconTint="@color/white"
+            app:title="Editar Perfil"
+            app:titleTextColor="@color/white"
+            app:titleCentered="true"/>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -27,67 +36,124 @@
             android:padding="24dp"
             android:gravity="center_horizontal">
 
-            <!-- FOTO -->
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/iv_settings_foto"
-                android:layout_width="130dp"
-                android:layout_height="130dp"
-                android:layout_marginBottom="24dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_person"
-                app:shapeAppearanceOverlay="@style/CircularImage" />
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="32dp">
 
-            <!-- Username -->
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/TextInputStyle"
-                android:hint="Nombre de Usuario">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_settings_username"
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/iv_settings_foto"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_person"
+                    android:padding="2dp"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearance.MaterialComponents.MediumComponent"
+                    app:strokeColor="@color/emerald_green"
+                    app:strokeWidth="2dp"
+                    app:cornerSize="50%" />
+
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_gravity="bottom|end"
+                    android:src="@drawable/ic_edit"
+                    android:background="@drawable/bg_boton_redondo_oscuro"
+                    android:padding="8dp"
+                    app:tint="@color/white"
+                    android:elevation="6dp"/>
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="32dp">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_height="wrap_content"
+                    android:hint="Nombre de Usuario"
+                    android:textColorHint="@color/text_gray"
+                    app:boxStrokeColor="@color/emerald_green"
+                    app:hintTextColor="@color/emerald_green"
+                    app:startIconDrawable="@drawable/ic_person"
+                    app:startIconTint="@color/emerald_green"
+                    android:layout_marginBottom="16dp">
 
-            <!-- Nombres -->
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/TextInputStyle"
-                android:hint="Nombres">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_settings_nombre"
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_settings_username"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:inputType="text"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_height="wrap_content"
+                    android:hint="Nombres"
+                    android:textColorHint="@color/text_gray"
+                    app:boxStrokeColor="@color/emerald_green"
+                    app:hintTextColor="@color/emerald_green"
+                    app:startIconDrawable="@drawable/ic_person"
+                    app:startIconTint="@color/emerald_green"
+                    android:layout_marginBottom="16dp">
 
-            <!-- Apellidos -->
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/TextInputStyle"
-                android:hint="Apellidos">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_settings_apellidos"
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_settings_nombre"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:inputType="textCapWords"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_height="wrap_content"
+                    android:hint="Apellidos"
+                    android:textColorHint="@color/text_gray"
+                    app:boxStrokeColor="@color/emerald_green"
+                    app:hintTextColor="@color/emerald_green"
+                    app:startIconDrawable="@drawable/ic_person"
+                    app:startIconTint="@color/emerald_green"
+                    android:layout_marginBottom="16dp">
 
-            <!-- URL Avatar -->
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/TextInputStyle"
-                android:hint="URL del Avatar">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_settings_avatar"
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_settings_apellidos"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:inputType="textCapWords"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_height="wrap_content"
+                    android:visibility="gone">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_settings_avatar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Botón Guardar -->
+            </LinearLayout>
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_guardar_cambios"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:text="Guardar Cambios"
                 android:textSize="16sp"
+                android:textStyle="bold"
+                app:cornerRadius="28dp"
                 android:backgroundTint="@color/emerald_green"
-                android:layout_marginTop="16dp"/>
+                android:textColor="@color/white"
+                android:layout_marginBottom="16dp"/>
 
-            <!-- Cerrar Sesión -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_logout_settings"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
@@ -95,8 +161,15 @@
                 android:layout_height="56dp"
                 android:text="Cerrar Sesión"
                 android:textColor="@color/red_danger"
-                android:layout_marginTop="16dp"
-                app:strokeColor="@color/red_danger"/>
+                android:textStyle="bold"
+                app:strokeColor="@color/red_danger"
+                app:strokeWidth="1dp"
+                app:cornerRadius="28dp"
+                app:icon="@drawable/ic_delete"
+                app:iconTint="@color/red_danger"
+                app:iconGravity="textStart"/>
+
         </LinearLayout>
-    </ScrollView>
-</LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
