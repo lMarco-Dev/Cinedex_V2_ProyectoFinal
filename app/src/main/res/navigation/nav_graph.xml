@@ -89,7 +89,16 @@
         android:name="com.example.cinedex_v2.UI.UsersFragments.PerfilFragment"
         android:label="Mi Perfil"
         tools:layout="@layout/fragment_perfil">
+        <action
+            android:id="@+id/action_perfilFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.cinedex_v2.UI.UsersFragments.SettingsFragment"
+        android:label="Ajustes"
+        tools:layout="@layout/fragment_settings"/>
 
     <fragment
         android:id="@+id/reviewDetailFragment"

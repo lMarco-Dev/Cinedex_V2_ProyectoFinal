@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#101010">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar_settings"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/emerald_green"
+        app:navigationIcon="@drawable/ic_arrow_back"
+        app:navigationIconTint="@color/white"
+        app:title="Configuración"
+        app:titleTextColor="@color/white" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp"
+            android:gravity="center_horizontal">
+
+            <!-- FOTO -->
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/iv_settings_foto"
+                android:layout_width="130dp"
+                android:layout_height="130dp"
+                android:layout_marginBottom="24dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_person"
+                app:shapeAppearanceOverlay="@style/CircularImage" />
+
+            <!-- Username -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/TextInputStyle"
+                android:hint="Nombre de Usuario">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_settings_username"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Nombres -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/TextInputStyle"
+                android:hint="Nombres">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_settings_nombre"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Apellidos -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/TextInputStyle"
+                android:hint="Apellidos">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_settings_apellidos"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- URL Avatar -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/TextInputStyle"
+                android:hint="URL del Avatar">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_settings_avatar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Botón Guardar -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_guardar_cambios"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="Guardar Cambios"
+                android:textSize="16sp"
+                android:backgroundTint="@color/emerald_green"
+                android:layout_marginTop="16dp"/>
+
+            <!-- Cerrar Sesión -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_logout_settings"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="Cerrar Sesión"
+                android:textColor="@color/red_danger"
+                android:layout_marginTop="16dp"
+                app:strokeColor="@color/red_danger"/>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
