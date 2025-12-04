@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,12 +13,14 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide; // Importar Glide
 import com.example.cinedex_v2.Data.DTOs.Resena.ResenaResponseDto;
 import com.example.cinedex_v2.Data.DTOs.Usuario.UsuarioResponseDto;
 import com.example.cinedex_v2.Data.Network.CineDexApiClient;
 import com.example.cinedex_v2.R;
 import com.example.cinedex_v2.UI.AdaptersUser.ProfileReviewAdapter;
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.imageview.ShapeableImageView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,7 @@ public class UserProfileFragment extends Fragment {
 
     private int userId;
     private TextView tvNombre, tvUsername, tvNoReviews;
+    private ShapeableImageView ivFoto;
     private RecyclerView rvResenas;
     private ProfileReviewAdapter adapter;
     private List<ResenaResponseDto> listaResenas = new ArrayList<>();
@@ -57,9 +59,11 @@ public class UserProfileFragment extends Fragment {
         MaterialToolbar toolbar = view.findViewById(R.id.toolbar_user_profile);
         toolbar.setNavigationOnClickListener(v -> Navigation.findNavController(view).popBackStack());
 
+        // Vincular Vistas
         tvNombre = view.findViewById(R.id.tv_other_user_name);
         tvUsername = view.findViewById(R.id.tv_other_user_username);
         tvNoReviews = view.findViewById(R.id.tv_no_reviews);
+        ivFoto = view.findViewById(R.id.iv_other_user_photo);
         rvResenas = view.findViewById(R.id.rv_other_user_reviews);
 
         // Configurar Grid
@@ -68,10 +72,23 @@ public class UserProfileFragment extends Fragment {
         adapter = new ProfileReviewAdapter(getContext(), listaResenas, resena -> {
             Bundle bundle = new Bundle();
             bundle.putSerializable("resena_data", resena);
-            Navigation.findNavController(view).navigate(R.id.reviewDetailFragment, bundle);
+            try {
+                Navigation.findNavController(view).navigate(R.id.reviewDetailFragment, bundle);
+            } catch (Exception e) { e.printStackTrace(); }
         });
         rvResenas.setAdapter(adapter);
 
+        // La carga inicial se hará en onResume
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        actualizarUI();
+    }
+
+    private void actualizarUI() {
+        // Como es otro usuario, recargamos desde la API para tener datos frescos
         cargarDatosUsuario();
         cargarResenasUsuario();
     }
@@ -82,8 +99,20 @@ public class UserProfileFragment extends Fragment {
             public void onResponse(Call<UsuarioResponseDto> call, Response<UsuarioResponseDto> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     UsuarioResponseDto u = response.body();
-                    tvNombre.setText(u.getNombres() + " " + u.getApellidos());
+
+                    // 1. Poner textos
+                    String nombreCompleto = (u.getNombres() != null) ? u.getNombres() + " " + u.getApellidos() : u.getNombreUsuario();
+                    tvNombre.setText(nombreCompleto);
                     tvUsername.setText("@" + u.getNombreUsuario());
+
+                    // 2. Cargar Foto (Esto faltaba)
+                    if (getContext() != null) {
+                        Glide.with(getContext())
+                                .load(u.getUrlAvatar())
+                                .placeholder(R.drawable.ic_person)
+                                .error(R.drawable.ic_person)
+                                .into(ivFoto);
+                    }
                 }
             }
             @Override
